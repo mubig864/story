@@ -1,5 +1,5 @@
 // 배포 시 CACHE_VERSION만 올리면 이전 캐시가 자동 정리됩니다.
-const CACHE_VERSION = "20261029-101";
+const CACHE_VERSION = "20261105-2";
 const CACHE_NAME = "juyeok-pwa-" + CACHE_VERSION;
 const OFFLINE_URL = "./index.html";
 
@@ -7,7 +7,7 @@ const PRECACHE = [
   "./", "./index.html", "./original.html", "./hexagram-list.html", "./about.html",
   "./style.css", "./original.css",
   "./init.js", "./gtag-init.js", "./hexagram-list.js", "./hexagrams.js", "./hexagrams_en.js", "./i18n.js", "./store.js",
-  "./core.js", "./menu.js", "./index.js", "./original.js", "./pwa-install.js",
+  "./core.js", "./divination.js", "./classic-view.js", "./yijing-data.js", "./menu.js", "./index.js", "./original.js", "./pwa-install.js",
   "./manifest.webmanifest", "./192.png", "./512.png", "./apple-touch-icon.png", "./maskable-512.png"
 ];
 

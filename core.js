@@ -1,6 +1,6 @@
 'use strict';
 /* 공통 로직 — index.html(간편)·original.html(서시법)·준비중 페이지 공용.
-   로드 순서: hexagrams.js → hexagrams_en.js → i18n.js → store.js → core.js → menu.js → (페이지별 js) */
+   로드 순서: hexagrams.js → hexagrams_en.js → i18n.js → store.js → core.js → divination.js → classic-view.js → menu.js → (페이지별 js) */
 
 // ===== DOM =====
 const $ = id => document.getElementById(id);
@@ -333,6 +333,8 @@ function setResultCardText(info, question) {
   actionList.replaceChildren(...toItems(reading.actions));
   practicalList.replaceChildren(...toItems(reading.practical));
   if (langNote) langNote.classList.toggle('hidden', !(en && !reading._detailInEnglish));
+  // 주역 원문 풀이(괘사·효사, 고변점 규칙) — divination.js / classic-view.js
+  if (typeof renderClassicBlock === 'function') renderClassicBlock(info);
 }
 
 function updateSaveButton() {

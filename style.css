@@ -804,15 +804,45 @@ html, body { -webkit-text-size-adjust: 100%; }
 
 /* ===== 개인정보 및 서비스 이용정보 안내 ===== */
 .privacy-body { display: grid; gap: 10px; padding-top: 10px; }
-.privacy-lead { display: grid; justify-items: center; gap: 4px; text-align: center; padding: 10px 12px;
+.privacy-lead { display: grid; justify-items: center; gap: 6px; text-align: center; padding: 18px 12px 16px;
   border-radius: 16px; background: linear-gradient(135deg, rgba(192,138,90,0.22), rgba(192,138,90,0.08)); border: 1px solid var(--border); }
 .privacy-lead-icon { color: var(--accent); display: inline-flex; }
-.privacy-lead-icon svg { width: 26px; height: 26px; }
+.privacy-lead-icon svg { width: 30px; height: 30px; }
 .privacy-lead strong { font-size: 1.1rem; line-height: 1.4; word-break: keep-all; }
+.privacy-lead-sub { color: var(--sub); font-size: 0.9rem; }
 .privacy-card { display: grid; grid-template-columns: auto 1fr; gap: 12px; align-items: start; padding: 14px;
   border-radius: 14px; background: var(--block-bg); border: 1px solid var(--border); }
+.privacy-card.note { border-left: 3px solid var(--accent); }
 .privacy-card-icon { color: var(--accent); display: inline-flex; margin-top: 1px; }
 .privacy-card h3 { margin: 0 0 4px; font-size: 1rem; }
 .privacy-card p { margin: 0; color: var(--sub); font-size: 0.92rem; line-height: 1.65; word-break: keep-all; }
 .privacy-card p b { color: var(--text); font-weight: 700; }
 .privacy-foot { margin: 4px 0 0; text-align: center; color: var(--sub); font-size: 0.85rem; }
+
+/* ===== 주역 원문 풀이 (classic-view.js) — 기존 변수만 사용 ===== */
+.classic-block h3 { margin-bottom: 8px; }
+.classic-intro { color: var(--sub); font-size: 0.9rem; }
+.classic-status { color: var(--sub); }
+.classic-rule { margin: 10px 0; padding: 10px 12px; border-radius: 12px; border: 1px dashed var(--border); background: var(--ghost-bg); }
+.classic-rule p + p { margin-top: 6px; }
+.classic-basis { color: var(--sub); font-size: 0.88rem !important; margin-top: 6px; }
+.classic-sub { margin: 14px 0 6px; font-size: 0.95rem; color: var(--accent); }
+.classic-card { margin: 8px 0; padding: 12px; border-radius: 14px; border: 1px solid var(--border); background: var(--ghost-bg); }
+.classic-card.is-primary { border-color: var(--accent); }
+.classic-card-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 8px; }
+.classic-card-head h4 { margin: 0; font-size: 0.98rem; }
+.classic-tag { font-size: 0.78rem; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--accent); color: var(--accent); }
+.classic-han { font-size: 1.25rem; letter-spacing: 0.04em; line-height: 1.6; margin: 4px 0 2px; font-weight: 700; word-break: keep-all; }
+.classic-reading { color: var(--sub); font-size: 0.92rem; }
+.classic-modern { margin: 6px 0 8px; }
+.classic-note { color: var(--sub); font-size: 0.85rem; }
+.classic-dl { margin: 8px 0 0; display: grid; gap: 8px; }
+.classic-dl dt { font-size: 0.82rem; font-weight: 700; color: var(--accent); }
+.classic-dl dd { margin: 2px 0 0; line-height: 1.7; font-size: 0.94rem; }
+.classic-message { margin-top: 10px !important; padding-top: 8px; border-top: 1px solid var(--border); font-weight: 700; }
+.classic-ref { margin: 8px 0; }
+.classic-ref > summary { cursor: pointer; color: var(--accent); font-weight: 700; font-size: 0.92rem; line-height: 1.5; }
+
+/* 64괘 목록: 괘사·효사 펼침 */
+.list-classic { margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border); }
+.list-classic-body { margin-top: 8px; }

@@ -123,7 +123,7 @@ const MENU_ITEMS = [
   const PRIVACY_CARDS = [
     { icon: 'user', t: 'privacy.c1t', d: 'privacy.c1d' },
     { icon: 'lock', t: 'privacy.c2t', d: 'privacy.c2d' },
-    { icon: 'chart', t: 'privacy.c3t', d: 'privacy.c3d' },
+    { icon: 'chart', t: 'privacy.c3t', d: 'privacy.c3d', note: true },   // 외부 서비스(GA4)가 관련된 유일한 항목 — 강조선으로 구분
     { icon: 'shield', t: 'privacy.c4t', d: 'privacy.c4d' }
   ];
   const svgIcon = n => '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" focusable="false" aria-hidden="true">' + MENU_ICONS[n] + '</svg>';
@@ -132,9 +132,9 @@ const MENU_ITEMS = [
     '<button type="button" class="icon-btn" data-close data-i18n-aria="settings.close">✕</button></div>' +
     '<div class="sheet-body privacy-body">' +
     '<div class="privacy-lead"><span class="privacy-lead-icon">' + svgIcon('shield') + '</span>' +
-    '<strong data-i18n="privacy.lead"></strong></div>' +
+    '<strong data-i18n="privacy.lead"></strong><span class="privacy-lead-sub" data-i18n="privacy.leadSub"></span></div>' +
     PRIVACY_CARDS.map(c =>
-      '<div class="privacy-card' + '' + '"><span class="privacy-card-icon">' + svgIcon(c.icon) + '</span>' +
+      '<div class="privacy-card' + (c.note ? ' note' : '') + '"><span class="privacy-card-icon">' + svgIcon(c.icon) + '</span>' +
       '<div><h3 data-i18n="' + c.t + '"></h3><p data-i18n-html="' + c.d + '"></p></div></div>').join('') +
     '<p class="privacy-foot" data-i18n="privacy.foot"></p>' +
     '</div>';
