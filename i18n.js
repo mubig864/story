@@ -159,10 +159,16 @@ const I18N = {
     'classic.list.open': '괘사·효사 원문 보기',
     'classic.list.gua': '괘사',
     'classic.list.yao': '{label} ({pos})',
+    'q.onceNote': '한 가지 질문은 한 번만 점치는 것이 전통입니다. 같은 질문을 거듭 묻기보다 나온 풀이를 곱씹어 보세요. (몽괘 괘사 “初筮告 再三瀆”: 처음 묻는 것은 일러 주지만, 거듭 물으면 무례가 되어 일러 주지 않는다)',
+    'result.repeatNote': '같은 질문으로 이미 점을 쳤습니다. 주역은 거듭 묻는 것을 경계합니다(몽괘 괘사 “再三瀆”). 먼저 나온 풀이를 충분히 생각해 본 뒤, 상황이 달라졌을 때 새 질문으로 다시 물어보세요.',
+    'classic.shift': '바뀌는 효가 {n}개로 많습니다. 주희의 고변점에서는 이런 경우 변화 후의 괘(지괘)를 중심으로 읽습니다. 위의 핵심 해석은 본괘를 기준으로 한 설명이니, 아래 “주역 원문으로 읽기”와 “변화의 방향”을 함께 참고하세요.',
+    'classic.shift.qian': '건위천의 여섯 효가 모두 바뀌었습니다. 이때는 지괘보다 건괘에만 있는 용구(用九)를 중심으로 읽습니다. 위의 핵심 해석은 본괘를 기준으로 한 설명이니, 아래 “주역 원문으로 읽기”를 함께 참고하세요.',
+    'classic.shift.kun': '곤위지의 여섯 효가 모두 바뀌었습니다. 이때는 지괘보다 곤괘에만 있는 용육(用六)을 중심으로 읽습니다. 위의 핵심 해석은 본괘를 기준으로 한 설명이니, 아래 “주역 원문으로 읽기”를 함께 참고하세요.',
     'classic.heading': '주역 원문으로 읽기',
     'classic.intro': '뽑힌 괘와 바뀌는 효에 맞는 주역의 괘사·효사를 정통 점법의 규칙에 따라 골라 보여 드립니다. 위의 풀이와 함께 읽어 보세요.',
     'classic.loading': '원문 풀이를 불러오는 중입니다…',
     'classic.loadFail': '원문 풀이를 불러오지 못했습니다. 인터넷 연결을 확인한 뒤 다시 시도해 주세요.',
+    'classic.retry': '다시 시도',
     'classic.koOnly': '원문은 한문으로 표시됩니다.',
     'classic.ruleTitle': '적용한 해석 규칙',
     'classic.countNone': '바뀌는 효 없음',
@@ -178,7 +184,7 @@ const I18N = {
     'classic.rule.six-qian': '건위천의 여섯 효가 모두 바뀌었으므로 건괘에만 있는 용구(用九)를 읽습니다. 지괘 곤위지의 괘사는 참고로만 봅니다.',
     'classic.rule.six-kun': '곤위지의 여섯 효가 모두 바뀌었으므로 곤괘에만 있는 용육(用六)을 읽습니다. 지괘 건위천의 괘사는 참고로만 봅니다.',
     'classic.basisSummary': '이 규칙의 근거',
-    'classic.basis': '주희(朱熹)의 『역학계몽』 「고변점」은 바뀌는 효의 개수에 따라 읽을 대목을 정합니다. 0개는 본괘 괘사, 1개는 본괘 동효의 효사, 2개는 본괘 두 동효의 효사(위쪽 중심), 3개는 본괘·지괘 괘사(앞 열 가지는 본괘, 뒤 열 가지는 지괘 중심), 4개는 지괘 두 불변효의 효사(아래쪽 중심), 5개는 지괘 불변효의 효사, 6개는 지괘 괘사(건·곤은 용구·용육)입니다. 이 방법은 주희 계열의 한 가지 전통이며, 학파와 실전가에 따라 읽는 법이 조금씩 다를 수 있습니다.',
+    'classic.basis': '주희(朱熹)의 『역학계몽』 「고변점」은 바뀌는 효의 개수에 따라 읽을 대목을 정합니다. 0개는 본괘 괘사, 1개는 본괘 변효의 효사, 2개는 본괘 두 변효의 효사(위쪽 중심), 3개는 본괘·지괘 괘사(앞 열 가지는 본괘, 뒤 열 가지는 지괘 중심), 4개는 지괘 두 불변효의 효사(아래쪽 중심), 5개는 지괘 불변효의 효사, 6개는 지괘 괘사(건·곤은 용구·용육)입니다. 이 방법은 주희 계열의 한 가지 전통이며, 학파와 실전가에 따라 읽는 법이 조금씩 다를 수 있습니다.',
     'classic.primary': '중심으로 읽을 대목',
     'classic.reference': '함께 참고할 대목',
     'classic.title.gua.ben': '본괘 {name} · 괘사',
@@ -243,7 +249,7 @@ const I18N = {
     'orig.val8': '소음(少陰) · 안정된 음',
     'orig.val9': '노양(老陽) · 변하는 양',
     'orig.valDefault': '효',
-    'orig.dragInfo': '{n}번째 가르기 · 아래 서죽을 좌우로 드래그하고 놓으세요.',
+    'orig.dragInfo': '{n}번째 가르기 · 개수를 세지 말고 마음 가는 대로 서죽을 좌우로 드래그해 놓으세요.',
     'orig.splitDone': '서죽이 갈라졌습니다. 움직임을 지켜보세요…',
     'orig.firstCalc': '첫 번째 변을 계산합니다. 다음 변에서는 다시 직접 가르세요.',
 
@@ -471,10 +477,16 @@ const I18N = {
     'classic.list.open': 'Show Judgment and line statements',
     'classic.list.gua': 'Judgment',
     'classic.list.yao': '{label} ({pos})',
+    'q.onceNote': 'Traditionally a question is asked only once. Rather than asking the same thing again, reflect on the reading you received. (Hexagram 4, Judgment: “The first divination informs; repeated asking is an insult, and the insult is not answered.”)',
+    'result.repeatNote': 'You have already consulted the oracle on this same question. The Yijing cautions against asking repeatedly (Hexagram 4, “repeated asking is an insult”). Reflect on the earlier reading first, and ask again with a new question when your situation has changed.',
+    'classic.shift': '{n} lines are changing, which is many. In Zhu Xi’s method you then read mainly from the resulting hexagram. The core reading above is based on the primary hexagram, so also consult “Reading from the classic text” and “direction of change” below.',
+    'classic.shift.qian': 'All six lines of Qian are changing. Here you read Qian’s special “Use of Nines” (用九) rather than the resulting hexagram. The core reading above is based on the primary hexagram, so also consult “Reading from the classic text” below.',
+    'classic.shift.kun': 'All six lines of Kun are changing. Here you read Kun’s special “Use of Sixes” (用六) rather than the resulting hexagram. The core reading above is based on the primary hexagram, so also consult “Reading from the classic text” below.',
     'classic.heading': 'Reading from the classic text',
     'classic.intro': 'Here are the Yijing passages (judgments and line statements) that match your hexagram and changing lines, chosen by the traditional rules. Read them together with the interpretation above.',
     'classic.loading': 'Loading the classic text…',
     'classic.loadFail': 'Could not load the classic text. Please check your connection and try again.',
+    'classic.retry': 'Try again',
     'classic.koOnly': 'The classic text is shown in the original Chinese. Korean readings and commentary are available in Korean only.',
     'classic.ruleTitle': 'Rule applied',
     'classic.countNone': 'No changing lines',
@@ -545,7 +557,7 @@ const I18N = {
     'orig.val8': 'Young yin · stable yin',
     'orig.val9': 'Old yang · changing yang',
     'orig.valDefault': 'Line',
-    'orig.dragInfo': 'Split {n} · Drag the stalks left or right, then release.',
+    'orig.dragInfo': 'Split {n} · Don\'t count; drag the stalks left or right as you feel, then release.',
     'orig.splitDone': 'The stalks are split. Watch what happens…',
     'orig.firstCalc': 'Calculating the first change. Split again yourself for the next one.',
 
@@ -649,11 +661,33 @@ function applyI18n(root) {
   if (titleKey) document.title = t(titleKey);
 }
 
+// 영어 괘 데이터(hexagrams_en.js, 약 수십 KB)는 영어를 고른 경우에만 늦게 불러옵니다. (한국어 사용자는 받지 않음)
+// 받는 동안은 비어 있는 필드가 한국어로 대체되어 보이고, 도착하면 화면을 한 번 더 그립니다.
+// 오프라인에서도 쓸 수 있게 sw.js 미리 저장 목록에는 그대로 넣어 둡니다.
+let enDataPromise = null;
+function loadEnglishData() {
+  if (typeof HEXAGRAMS_EN !== 'undefined') return Promise.resolve(true);
+  if (!enDataPromise) {
+    enDataPromise = new Promise(resolve => {
+      const s = document.createElement('script');
+      s.src = 'hexagrams_en.js?v=20261106';
+      s.onload = () => resolve(true);
+      s.onerror = () => { enDataPromise = null; s.remove(); resolve(false); };   // 실패하면 다음 전환 때 다시 시도
+      document.head.appendChild(s);
+    });
+  }
+  return enDataPromise;
+}
+
 function setLang(lang, persist) {
   if (!I18N[lang]) lang = 'ko';
   currentLang = lang;
   document.documentElement.lang = lang;
   if (persist !== false && typeof setSetting === 'function') setSetting('lang', lang);
   applyI18n();
-  langListeners.forEach(fn => { try { fn(lang); } catch (e) { console.error(e); } });
+  const notify = () => langListeners.forEach(fn => { try { fn(currentLang); } catch (e) { console.error(e); } });
+  notify();
+  if (lang === 'en' && typeof HEXAGRAMS_EN === 'undefined') {
+    loadEnglishData().then(ok => { if (ok && currentLang === 'en') notify(); });
+  }
 }

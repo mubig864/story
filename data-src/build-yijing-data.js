@@ -45,3 +45,11 @@ const out = '/* 자동 생성 파일 — 직접 수정하지 마세요. data-src
   'const YIJING_DATA = ' + JSON.stringify({ version: 1, guas }) + ';\n';
 fs.writeFileSync(path.join(dir, '..', 'yijing-data.js'), out);
 console.log('yijing-data.js 생성:', Math.round(out.length / 1024) + 'KB, 괘', Object.keys(guas).length);
+
+// ── 괘 메타 표(단일 출처): 번호·이름·한자·상/하괘·이진키. hexagrams.js / hexagram-list.js 가 이 표를 공유합니다.
+const meta = table.map(r => [r.n, r.ko, r.han, r.upper, r.lower, r.bits]);
+const metaOut = '/* 자동 생성 파일 — 직접 수정하지 마세요. data-src/table.json 을 고친 뒤 node data-src/build-yijing-data.js\n   64괘 메타 표(단일 출처): [번호, 한글 이름, 한자, 상괘, 하괘, 이진키(초효→상효, 1=양)] */\n' +
+  'const HEX_META = [\n' + meta.map(r => ' ' + JSON.stringify(r)).join(',\n') + '\n].map(r => ({ n: r[0], ko: r[1], han: r[2], upper: r[3], lower: r[4], bits: r[5] }));\n' +
+  'const HEX_META_BY_BITS = {}; HEX_META.forEach(m => { HEX_META_BY_BITS[m.bits] = m; });\n';
+fs.writeFileSync(path.join(dir, '..', 'hexmeta.js'), metaOut);
+console.log('hexmeta.js 생성: 괘', meta.length);

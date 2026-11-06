@@ -75,7 +75,9 @@ window.addEventListener('unhandledrejection', e => notifyUnexpected(e.reason));
 // ===== 난수 =====
 // 전통 확률 (시초점, 계사전 '대연지수' 방식): 노음 6 = 1/16, 소양 7 = 5/16, 소음 8 = 7/16, 노양 9 = 3/16
 // 터치 입력(시각·좌표·누른 시간)을 해시로 누적하고 보안 난수와 XOR로 섞는다.
-// 한쪽이 균등 난수이므로 입력 패턴이 치우쳐도 확률은 유지되고, 입력으로 결과를 노릴 수도 없다.
+// 한쪽이 균등 난수이므로 입력 패턴이 치우쳐도 확률은 유지되고, 입력으로 결과를 노릴 수도 없다(간편 뽑기·자동 뽑기).
+// 서시법 수동 가르기는 사람의 손 위치가 그대로 가르기에 쓰이는 전통 방식이라 섞지 않는 대신,
+// 가르는 동안 좌우 개수를 보여주지 않는다(original.js updateSplitPreview).
 const LINE_WEIGHTS = [
   { value: 6, weight: 1 },
   { value: 7, weight: 5 },
@@ -333,6 +335,8 @@ function setResultCardText(info, question) {
   actionList.replaceChildren(...toItems(reading.actions));
   practicalList.replaceChildren(...toItems(reading.practical));
   if (langNote) langNote.classList.toggle('hidden', !(en && !reading._detailInEnglish));
+  const repeatNote = document.getElementById('repeatNote');   // 같은 질문 반복 안내(방금 뽑은 결과에만)
+  if (repeatNote) repeatNote.classList.toggle('hidden', !(currentResult && currentResult.repeatQuestion && !currentResult.fromVault));
   // 주역 원문 풀이(괘사·효사, 고변점 규칙) — divination.js / classic-view.js
   if (typeof renderClassicBlock === 'function') renderClassicBlock(info);
 }
@@ -356,13 +360,21 @@ function renderResult() {
   resultCard.classList.remove('hidden');
 }
 
+// 한 가지 질문은 한 번만 — 몽괘 괘사 "初筮告 再三瀆 瀆則不告"(거듭 묻는 것은 무례). 같은 질문으로 다시 점치면 안내만 하고 막지는 않는다.
+let lastAskedKey = '';
+const normalizeQuestion = q => q.replace(/\s+/g, ' ').trim().toLowerCase();
+
 function showResult() {
+  const asked = questionInput ? questionInput.value.trim() : '';
+  const askedKey = normalizeQuestion(asked);
   currentResult = {
     values: lines.map(l => l.value),
-    question: questionInput ? questionInput.value.trim() : '',
+    question: asked,
     method: PAGE_METHOD,
-    savedId: null
+    savedId: null,
+    repeatQuestion: !!askedKey && askedKey === lastAskedKey
   };
+  if (askedKey) lastAskedKey = askedKey;
   renderResult();
   setTimeout(() => resultCard.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
 }

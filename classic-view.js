@@ -73,13 +73,33 @@ function yjPassageTitle(p) {
   return t('classic.title.yao.' + p.side, { name, label: p.label, pos: t('classic.pos.' + p.pos) });
 }
 
+// 변효가 4개 이상이면 규칙상 지괘(또는 용구·용육)가 중심이라, 본괘 기준의 위 해설과 읽는 순서가 달라짐을 알린다.
+function updateShiftNote(values) {
+  const el = document.getElementById('classicShiftNote');
+  if (!el) return;
+  const n = values.filter(v => v === 6 || v === 9).length;
+  let key = null;
+  if (n === 6 && values.every(v => v === 9)) key = 'classic.shift.qian';
+  else if (n === 6 && values.every(v => v === 6)) key = 'classic.shift.kun';
+  else if (n >= 4) key = 'classic.shift';
+  if (key) el.textContent = t(key, { n });
+  el.classList.toggle('hidden', !key);
+}
+
 function renderClassicBlock(info) {
   const body = document.getElementById('classicBody');
   if (!body || !info) return;
   yjLastInfo = info;
   const values = info.lineList.map(l => l.value);
+  updateShiftNote(values);
   if (!yjInterpreter) {
-    body.replaceChildren(yjEl('p', 'classic-status', t(yjFailed ? 'classic.loadFail' : 'classic.loading')));
+    const status = yjEl('p', 'classic-status', t(yjFailed ? 'classic.loadFail' : 'classic.loading'));
+    if (yjFailed) {   // 실패 후에도 다시 시도할 수 있게 한다
+      const retry = yjEl('button', 'secondary', t('classic.retry'));
+      retry.type = 'button';
+      retry.addEventListener('click', () => { yjFailed = false; renderClassicBlock(info); });
+      body.replaceChildren(status, retry);
+    } else body.replaceChildren(status);
     if (!yjFailed) {
       loadYijingData().then(() => { if (yjLastInfo === info) renderClassicBlock(info); })
         .catch(e => { console.error(e); yjFailed = true; if (yjLastInfo === info) renderClassicBlock(info); });

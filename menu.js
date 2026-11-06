@@ -221,9 +221,9 @@ const MENU_ITEMS = [
     const barVault = el('button', 'bar-btn', { type: 'button' });
     const barMenu = el('button', 'bar-btn', { type: 'button' });
     const fillBar = () => {
-      barDivine.innerHTML = '<span aria-hidden="true">☲</span> ' + t('bar.divine');
-      barVault.innerHTML = '<span aria-hidden="true">☷</span> ' + t('bar.vault');
-      barMenu.innerHTML = '<span aria-hidden="true">☰</span> ' + t('menu.title');
+      barDivine.textContent = t('bar.divine');
+      barVault.textContent = t('bar.vault');
+      barMenu.textContent = t('menu.title');
       bar.setAttribute('aria-label', t('menu.title'));
     };
     fillBar();

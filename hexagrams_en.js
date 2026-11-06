@@ -874,7 +874,7 @@ const HEXAGRAMS_EN = {
   "name": "The Army (Shi)",
   "keyword": "Discipline and leadership",
   "summary": "Big goals need clear rules, a just cause, and a leader people can trust.",
-  "core": "Shi (師) means an army. Like water gathered within the earth, it is a formation in which the strength of many people is pooled and moves toward one goal. It is favorable only with a just cause and a leader of good character; leading by force always leaves aftereffects.",
+  "core": "Shi (師) means an army. Like water gathered within the earth, it is a formation in which the strength of many people is pooled and moves toward one goal. It is favorable only with a just cause and a leader of good character; leading by force tends to leave aftereffects.",
   "situation": "This fits team projects, running an organization, and conflicts in which you must fight a battle. It is a time to ask first whether the fight is justified and you are well prepared, not whether you can win.",
   "example": "If someone who has just become a team lead drew this hexagram, it can be read to mean that making the purpose and rules of the work clear and respecting team members, rather than leaning on performance pressure, leads to stable results.",
   "actions": [
@@ -922,7 +922,7 @@ const HEXAGRAMS_EN = {
   "name": "Standstill (Pi)",
   "keyword": "Blocked communication",
   "summary": "Things are stuck and people are not connecting; hold your values and wait without forcing.",
-  "core": "Pi (否) is the picture of heaven and earth turned away from each other, with exchange cut off. Intentions don't connect and people's hearts drift apart, so forcing things only increases your losses. But a blockage is not permanent; when it ends, it is bound to tip over and a time of release will come.",
+  "core": "Pi (否) is the picture of heaven and earth turned away from each other, with exchange cut off. Intentions don't connect and people's hearts drift apart, so forcing things only increases your losses. But a blockage is not permanent; when it ends, it tends to tip over and a time of release can come.",
   "situation": "This is a period when conversation breaks down, effort goes unrecognized, and the surroundings turn unfavorable. At such times it is better to protect your substance and avoid needless clashes than to put yourself on display.",
   "example": "If someone whose proposals keep getting rejected at work drew this hexagram, it means to step back instead of pouring energy into persuasion, reinforce your skills and evidence, and prepare for when the mood changes.",
   "actions": [
@@ -1225,7 +1225,7 @@ const HEXAGRAMS_EN = {
   ],
   "list": {
    "kw": "Obstacles and a hard road",
-   "meaning": "Water blocking the way in front of a mountain: advancing is hard and obstacles are many, so you need to change direction or seek help.",
+   "meaning": "Water above a mountain blocks the way: advancing is hard and obstacles are many, so you need to change direction or seek help.",
    "advice": "Don't insist on a head-on breakthrough. Stop, look at the cause, consult someone experienced, or find a detour.",
    "example": "If the schedule keeps slipping, list the obstacles and separate what you can solve alone from what needs support."
   }

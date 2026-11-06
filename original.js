@@ -428,9 +428,13 @@ function splitRatioAt(clientX) {
 function updateSplitPreview(clientX, forcedRatio) {
   const ratio = Number.isFinite(forcedRatio) ? forcedRatio : splitRatioAt(clientX);
   stalkSplitMarker.style.left = (ratio * 100) + '%';
+  // 전통 서시법에서는 개수를 세지 않고 무심히 가른다. 개수(→4로 나눈 나머지)를 미리 보여주면 결과를 의도적으로
+  // 고를 수 있으므로, 가르는 동안에는 좌우 개수를 표시하지 않고 "왼쪽 무리/오른쪽 무리" 라벨만 둔다.
+  // (가른 뒤 실제로 세는 과정의 天 N / 地 N 표시는 그대로.)
+  leftPreviewCount.textContent = t('orig.leftGroup');
+  rightPreviewCount.textContent = t('orig.rightGroup');
+  // 막대기가 갈라져 보이는 위치 계산에는 개수가 필요하므로 값은 계산하되 화면에는 표시하지 않는다.
   const leftCount = computeSplit(previewStalkCount, ratio).L;
-  leftPreviewCount.textContent = t('orig.leftN', { n: leftCount });
-  rightPreviewCount.textContent = t('orig.rightN', { n: previewStalkCount - leftCount });
   const sticks = stalkPreview.querySelectorAll('.preview-stalk');
   const availableWidth = Math.min(560, Math.max(120, (stalkPreview.parentElement ? stalkPreview.parentElement.clientWidth : 320) - 36));
   const targetWidth = Math.min(availableWidth, Math.max(120, previewStalkCount * 9 + 24));

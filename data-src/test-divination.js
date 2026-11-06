@@ -22,7 +22,7 @@ for (let k = 0; k < 4096; k++) {
   if (r.changedBinary !== zhi) bad('지괘 ' + v);
   if (old && (!old.H[ben] || !old.H[zhi])) bad('앱 기존 데이터에 없음');
   const ch = v.map((a, i) => (a === 6 || a === 9 ? i + 1 : 0)).filter(Boolean);
-  if (JSON.stringify(ch) !== JSON.stringify(r.changing)) bad('동효 ' + v);
+  if (JSON.stringify(ch) !== JSON.stringify(r.changing)) bad('변효 ' + v);
   // 기존 앱 괘 이름과 일치
   if (old && old.H[ben].name.split(' (')[0] !== r.ben.name) bad('본괘 이름 불일치 ' + ben);
   if (old && old.H[zhi].name.split(' (')[0] !== r.zhi.name) bad('지괘 이름 불일치 ' + zhi);
