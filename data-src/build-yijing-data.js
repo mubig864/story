@@ -9,6 +9,8 @@ const dir = __dirname;
 const table = JSON.parse(fs.readFileSync(path.join(dir, 'table.json'), 'utf8'));
 const TRI_HAN = { '건': '乾', '태': '兌', '리': '離', '진': '震', '손': '巽', '감': '坎', '간': '艮', '곤': '坤' };
 const GUA_FIELDS = ['text', 'reading', 'modern', 'symbol', 'situation', 'positive', 'caution', 'direction', 'message'];
+// 십익 중 象傳: 대상(괘 전체 象)·소상(효별 象). data-src/xiang_NN.json
+const XIANG_FIELDS = ['text', 'reading', 'modern'];
 const YAO_FIELDS = ['text', 'reading', 'modern', 'meaning', 'positive', 'caution', 'advice', 'message'];
 const pick = (o, keys) => Object.fromEntries(keys.map(k => [k, o[k]]));
 const POS = ['初', '二', '三', '四', '五', '上'];
@@ -18,26 +20,30 @@ for (const row of table) {
   const f = path.join(dir, 'gua_' + String(row.n).padStart(2, '0') + '.json');
   const src = JSON.parse(fs.readFileSync(f, 'utf8'));
   if (src.n !== row.n) throw new Error(f + ': n 불일치');
+  const xf = path.join(dir, 'xiang_' + String(row.n).padStart(2, '0') + '.json');
+  const xs = JSON.parse(fs.readFileSync(xf, 'utf8'));
+  if (xs.n !== row.n || xs.xiang.length !== 6) throw new Error(xf + ': 형식 오류');
   const bits = row.bits.split('').map(Number);               // 초효 → 상효, 1=양 0=음
   const label = (i, yang) => (i === 0 ? '初' : i === 5 ? '上' : '') + (yang ? '九' : '六') + (i === 0 || i === 5 ? '' : POS[i]);
   const yao = src.yao.map((y, i) => {
     const yang = bits[i] === 1;
     return {
       guaN: row.n, guaName: row.ko, pos: i + 1, label: label(i, yang), yinyang: yang ? 'yang' : 'yin',
-      ...pick(y, YAO_FIELDS)
+      ...pick(y, YAO_FIELDS),
+      xiang: pick(xs.xiang[i], XIANG_FIELDS)      // 소상(小象)
     };
   });
   const entry = {
     n: row.n, name: row.ko, han: row.han,
     upper: row.upper, lower: row.lower, upperHan: TRI_HAN[row.upper], lowerHan: TRI_HAN[row.lower],
     bits, binary: row.bits,
-    gua: pick(src.gua, GUA_FIELDS),
+    gua: { ...pick(src.gua, GUA_FIELDS), daxiang: pick(xs.daxiang, XIANG_FIELDS) },   // 대상(大象)
     yao,
     yong: null
   };
   if (src.yong) {
     const yang = row.n === 1;     // 건 用九 / 곤 用六
-    entry.yong = { guaN: row.n, guaName: row.ko, label: yang ? '用九' : '用六', yinyang: yang ? 'yang' : 'yin', ...pick(src.yong, YAO_FIELDS) };
+    entry.yong = { guaN: row.n, guaName: row.ko, label: yang ? '用九' : '用六', yinyang: yang ? 'yang' : 'yin', ...pick(src.yong, YAO_FIELDS), xiang: pick(xs.yongXiang, XIANG_FIELDS) };
   }
   guas[row.n] = entry;
 }
