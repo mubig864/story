@@ -5,7 +5,7 @@
    - 로드 순서: ... core.js → divination.js → classic-view.js → (페이지별 js)
    - core.js 의 setResultCardText() 끝에서 renderClassicBlock(info) 를 호출합니다. */
 
-const YIJING_DATA_SRC = 'yijing-data.js?v=20261105';
+const YIJING_DATA_SRC = 'yijing-data.js?v=20261109';
 let yjInterpreter = null, yjLoading = null, yjFailed = false, yjLastInfo = null;
 
 function loadYijingData() {
@@ -45,9 +45,18 @@ function yjPassageCard(p, en, plain) {
 
   const d = p.data;
   card.appendChild(yjEl('p', 'classic-han', d.text));
-  if (en) { card.appendChild(yjEl('p', 'classic-note', t('classic.koOnly'))); return card; }
+  if (en) {
+    card.appendChild(yjEl('p', 'classic-note', t('classic.koOnly')));
+    const xbEn = yjXiangBox(p, true);
+    if (xbEn) card.appendChild(xbEn);
+    const posBox = yjPositionBox(p);
+    if (posBox) card.appendChild(posBox);
+    return card;
+  }
   card.appendChild(yjEl('p', 'classic-reading', d.reading));
   card.appendChild(yjEl('p', 'classic-modern', d.modern));
+  const xb = yjXiangBox(p, false);
+  if (xb) card.appendChild(xb);
 
   const rows = p.type === 'gua'
     ? [['symbol', d.symbol], ['situation', d.situation], ['positive', d.positive], ['caution', d.caution], ['direction', d.direction]]
@@ -56,7 +65,46 @@ function yjPassageCard(p, en, plain) {
   rows.forEach(([k, v]) => { dl.append(yjEl('dt', '', t('classic.f.' + k)), yjEl('dd', '', v)); });
   card.appendChild(dl);
   card.appendChild(yjEl('p', 'classic-message', d.message));
+  const posBox = yjPositionBox(p);
+  if (posBox) card.appendChild(posBox);
   return card;
+}
+
+// 상전(象傳) 한 줄: 괘사 카드에는 대상(大象), 효사·용구·용육 카드에는 소상(小象)을 붙인다.
+// 십익(十翼)의 하나인 상전은 괘·효의 "이미지"를 군자의 행동이나 효의 사정으로 풀어 주는 전통적 보조 해설이다. (데이터: data-src/xiang_NN.json)
+function yjXiangBox(p, hanOnly) {
+  const x = p.type === 'gua' ? p.data.daxiang : p.data.xiang;
+  if (!x) return null;
+  const box = yjEl('div', 'classic-xiang');
+  box.appendChild(yjEl('p', 'classic-xiang-label', t(p.type === 'gua' ? 'classic.xiang.da' : 'classic.xiang.xiao')));
+  box.appendChild(yjEl('p', 'classic-han', x.text));
+  if (!hanOnly) {
+    box.appendChild(yjEl('p', 'classic-reading', x.reading));
+    box.appendChild(yjEl('p', 'classic-modern', x.modern));
+  }
+  return box;
+}
+
+// 효사(yao) 카드 끝에 붙는 "효의 자리 살펴보기"(정·중·응·비). 계산은 divination.js 의 analyzeLine, 문구는 i18n.
+// 길흉을 정하지 않는 보조 설명이며, 접어 두어 처음 읽는 사람에게 부담을 주지 않는다.
+function yjPositionBox(p) {
+  if (p.type !== 'yao' || !p.gua || !p.gua.binary || typeof YijingDivination === 'undefined') return null;
+  const a = YijingDivination.analyzeLine(p.gua.binary, p.pos);
+  const yy = b => t(b ? 'classic.pos.yangWord' : 'classic.pos.yinWord');
+  const lines = [];
+  lines.push(t(a.proper ? 'classic.pos.proper' : 'classic.pos.improper', { pos: t('classic.pos.' + a.pos), slot: yy(a.slotYang), line: yy(a.yang) }));
+  if (a.central) {
+    lines.push(t('classic.pos.center.' + a.centerOf));
+    if (a.zhongzheng) lines.push(t('classic.pos.zhongzheng'));
+  }
+  lines.push(t(a.ying.matched ? 'classic.pos.ying' : 'classic.pos.noYing', { partner: t('classic.pos.' + a.ying.pos), pl: yy(a.ying.yang) }));
+  a.neighbors.forEach(nb => lines.push(t(nb.bi ? 'classic.pos.bi' : 'classic.pos.noBi', { side: t('classic.pos.side.' + nb.side), q: t('classic.pos.' + nb.pos), pl: yy(nb.yang) })));
+  const det = yjEl('details', 'classic-pos');
+  det.appendChild(yjEl('summary', '', t('classic.pos.summary')));
+  const ul = yjEl('ul', 'classic-pos-list');
+  lines.forEach(s => ul.appendChild(yjEl('li', '', s)));
+  det.append(ul, yjEl('p', 'classic-note', t('classic.pos.note')));
+  return det;
 }
 
 // 괘 목록 페이지용: 본괘/지괘 접두어 없이 "괘사", "初九 (초효)" 처럼 표시

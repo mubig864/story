@@ -851,3 +851,12 @@ html, body { -webkit-text-size-adjust: 100%; }
 .ask-once-note { margin: 6px 2px 0; font-size: 0.82rem; line-height: 1.6; color: var(--sub); }
 .repeat-note, .classic-shift-note { margin: 0 0 10px; padding: 8px 12px; border-radius: 12px; font-size: 0.88rem; line-height: 1.6; color: var(--soft-text); background: rgba(192,138,90,0.14); border: 1px solid rgba(192,138,90,0.3); }
 .classic-shift-note { margin: 10px 0; }
+
+/* 효의 자리 살펴보기(정·중·응·비) — 효사 카드 끝의 접이식 보조 설명 */
+.classic-pos { margin-top: 10px; font-size: 0.86rem; }
+.classic-pos > summary { cursor: pointer; color: var(--sub); }
+.classic-pos-list { margin: 6px 0 0; padding-left: 1.2em; line-height: 1.65; }
+
+/* 상전(대상·소상) 블록 */
+.classic-xiang { margin: 10px 0; padding: 8px 10px; border-left: 3px solid var(--border); }
+.classic-xiang-label { margin: 0 0 4px; font-size: 0.8rem; color: var(--sub); }

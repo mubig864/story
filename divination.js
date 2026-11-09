@@ -66,6 +66,32 @@
     };
   }
 
+  /* ───────────────────────── 효의 자리 분석 (효위: 정·중·응·비) ─────────────────────────
+     효사를 읽을 때 전통적으로 곁들여 보는 보조 도구로, 『주역』 단전·상전과 정이천 『주역전』·주희 『주역본의』의
+     해설에서 두루 쓰이는 기본 개념만 계산합니다. 효사의 길흉을 정하는 규칙이 아니며, 학파마다 비중이 다릅니다.
+       · 정(正): 홀수 자리(1·3·5)는 양의 자리, 짝수 자리(2·4·6)는 음의 자리. 자리와 같은 음양의 효가 있으면 정, 아니면 부정(不正).
+       · 중(中): 내괘(1·2·3)의 가운데 2효, 외괘(4·5·6)의 가운데 5효. 중과 정을 함께 갖추면 중정(中正, 2효 음·5효 양).
+       · 응(應): 1-4, 2-5, 3-6 효끼리 짝. 음양이 서로 다르면 응, 같으면 무응(無應, 敵應).
+       · 비(比): 바로 이웃한 효(아래·위)와의 관계. 음양이 다르면 서로 어울리는 비로 봄.
+     binary: 괘의 이진 문자열(초효가 첫 글자, 1=양). pos: 1~6. */
+  function analyzeLine(binary, pos) {
+    const yangAt = p => binary.charAt(p - 1) === '1';
+    const yang = yangAt(pos);
+    const proper = (pos % 2 === 1) === yang;
+    const central = pos === 2 || pos === 5;
+    const partner = pos <= 3 ? pos + 3 : pos - 3;
+    const neighbors = [];
+    if (pos > 1) neighbors.push({ side: 'below', pos: pos - 1, yang: yangAt(pos - 1), bi: yangAt(pos - 1) !== yang });
+    if (pos < 6) neighbors.push({ side: 'above', pos: pos + 1, yang: yangAt(pos + 1), bi: yangAt(pos + 1) !== yang });
+    return {
+      pos, yang, slotYang: pos % 2 === 1, proper,
+      central, centerOf: central ? (pos === 2 ? 'inner' : 'outer') : null,
+      zhongzheng: central && proper,
+      ying: { pos: partner, yang: yangAt(partner), matched: yangAt(partner) !== yang },
+      neighbors
+    };
+  }
+
   /** 삼효변(변효 3개) 구분: 초효 포함 → 'front'(前十卦, 貞·본괘 중심), 아니면 'back'(後十卦, 悔·지괘 중심) */
   function threeChangeGroup(changing) {
     return changing.indexOf(1) !== -1 ? 'front' : 'back';
@@ -133,7 +159,7 @@
     return { interpret, byBinary };
   }
 
-  const api = { computeHexagram, threeChangeGroup, createInterpreter, LINE_BY_VALUE };
+  const api = { computeHexagram, threeChangeGroup, analyzeLine, createInterpreter, LINE_BY_VALUE };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.YijingDivination = api;
 })(typeof window !== 'undefined' ? window : globalThis);
