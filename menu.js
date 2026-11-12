@@ -67,13 +67,10 @@ const MENU_ITEMS = [
   });
   drawer.append(drawerHead, list);
 
-  // ---------- 공유하기: 앱 주소를 클립보드에 복사 ----------
-  // 어느 페이지에서 눌러도 항상 같은 앱 주소를 복사한다. (#view=… 같은 개인 기록 주소는 포함하지 않음)
+  // ---------- 공유하기: QR 코드 + 주소 복사 ----------
+  // 어느 페이지에서 눌러도 항상 같은 앱 주소를 보여 주고 복사한다. (#view=… 같은 개인 기록 주소는 포함하지 않음)
   const SHARE_URL = 'https://mubig864.github.io/story/';
   function shareUrl() { return SHARE_URL; }
-  function toast(msg) {
-    if (typeof showToast === 'function') showToast(msg); else alert(msg);
-  }
   function copyFallback(text) {
     // 구형 브라우저·권한이 막힌 환경용
     const ta = el('textarea', null, { readonly: '', 'aria-hidden': 'true' });
@@ -86,16 +83,49 @@ const MENU_ITEMS = [
     ta.remove();
     return ok;
   }
-  async function shareApp() {
+  // 공유하기 창: QR 코드(스마트폰 카메라로 바로 열기) + 주소 복사. QR 은 qr.js 가 오프라인에서 직접 만든다.
+  // 주소는 항상 SHARE_URL 이며 개인 기록(#view=…)은 들어가지 않는다.
+  const shareDlg = el('dialog', 'sheet', { 'aria-labelledby': 'shareTitle' });
+  shareDlg.innerHTML =
+    '<div class="sheet-head"><h2 id="shareTitle" data-i18n="share.title"></h2>' +
+    '<button type="button" class="icon-btn" data-close data-i18n-aria="settings.close">✕</button></div>' +
+    '<div class="sheet-body share-body">' +
+    '<p class="hint" data-i18n="share.scan"></p>' +
+    '<div class="share-qr" id="shareQr"></div>' +
+    '<div class="share-url-row"><input type="text" id="shareUrl" class="share-url" readonly data-i18n-aria="share.urlLabel">' +
+    '<button type="button" class="primary share-copy" id="shareCopy" data-i18n="share.copy"></button></div>' +
+    '<p class="hint share-status" id="shareStatus" role="status" aria-live="polite"></p>' +
+    '</div>';
+  const shareQr = shareDlg.querySelector('#shareQr'), shareUrlInput = shareDlg.querySelector('#shareUrl');
+  const shareCopyBtn = shareDlg.querySelector('#shareCopy'), shareStatus = shareDlg.querySelector('#shareStatus');
+  let shareStatusTimer = null;
+  function setShareStatus(msg, ms) {
+    shareStatus.textContent = msg;
+    clearTimeout(shareStatusTimer);
+    if (ms) shareStatusTimer = setTimeout(() => { shareStatus.textContent = ''; }, ms);
+  }
+  function renderShareQr() {
+    const url = shareUrl();
+    shareUrlInput.value = url;
+    try { shareQr.innerHTML = QRCodeLite.toSvg(url, { label: t('share.qrLabel') }); }
+    catch (e) { shareQr.textContent = ''; console.error(e); }   // QR 을 못 만들어도 주소 복사는 계속 쓸 수 있게
+  }
+  async function copyShareUrl() {
     const url = shareUrl();
     let ok = false;
-    try {
-      if (navigator.clipboard && navigator.clipboard.writeText) { await navigator.clipboard.writeText(url); ok = true; }
-    } catch (e) {}
+    try { if (navigator.clipboard && navigator.clipboard.writeText) { await navigator.clipboard.writeText(url); ok = true; } } catch (e) {}
     if (!ok) ok = copyFallback(url);
-    if (ok) toast(t('share.copied'));
-    else window.prompt(t('share.manual'), url);   // 복사가 모두 막힌 경우: 직접 복사할 수 있게 주소를 보여 준다
+    if (ok) setShareStatus(t('share.copied'), 3000);
+    else { shareUrlInput.focus(); shareUrlInput.select(); setShareStatus(t('share.manual')); }   // 복사가 모두 막힌 경우: 선택해 두고 직접 복사하게 안내
   }
+  shareCopyBtn.addEventListener('click', copyShareUrl);
+  shareUrlInput.addEventListener('focus', () => shareUrlInput.select());
+  function shareApp() {
+    renderShareQr();
+    setShareStatus('');
+    if (shareDlg.showModal) shareDlg.showModal(); else shareDlg.setAttribute('open', '');
+  }
+  onLangChange(() => { if (shareDlg.open) renderShareQr(); });
 
   // ---------- 설정 창 ----------
   const settingsDlg = el('dialog', 'sheet', { 'aria-labelledby': 'settingsTitle' });
@@ -151,7 +181,7 @@ const MENU_ITEMS = [
     '<ul class="vault-list" id="vaultList"></ul>' +
     '<div class="vault-foot"><button type="button" class="ghost" id="vaultClear" data-i18n="vault.clear"></button></div></div>';
 
-  document.body.append(backdrop, drawer, settingsDlg, privacyDlg, vaultDlg);
+  document.body.append(backdrop, drawer, settingsDlg, privacyDlg, vaultDlg, shareDlg);
 
   // ---------- 서랍 열고 닫기 ----------
   const appRoot = document.querySelector('.app');
@@ -205,7 +235,7 @@ const MENU_ITEMS = [
     }
     if (dlg.showModal) dlg.showModal(); else dlg.setAttribute('open', '');
   }
-  [settingsDlg, privacyDlg, vaultDlg].forEach(dlg => {
+  [settingsDlg, privacyDlg, vaultDlg, shareDlg].forEach(dlg => {
     dlg.addEventListener('click', e => {
       if (e.target === dlg || e.target.closest('[data-close]')) dlg.close();   // 바깥(배경) 클릭 또는 ✕
     });

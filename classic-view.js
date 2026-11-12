@@ -5,7 +5,7 @@
    - 로드 순서: ... core.js → divination.js → classic-view.js → (페이지별 js)
    - core.js 의 setResultCardText() 끝에서 renderClassicBlock(info) 를 호출합니다. */
 
-const YIJING_DATA_SRC = 'yijing-data.js?v=20261109';
+const YIJING_DATA_SRC = 'yijing-data.js?v=20261112';
 let yjInterpreter = null, yjLoading = null, yjFailed = false, yjLastInfo = null;
 
 function loadYijingData() {
@@ -134,6 +134,32 @@ function updateShiftNote(values) {
   el.classList.toggle('hidden', !key);
 }
 
+// "이번 변효 한눈에": 핵심 해석 바로 아래에, 이번 점에서 읽을 대목(중심 대목)의 원문·쉬운 풀이·한 줄 메시지를 먼저 보여 준다.
+// 변효가 없으면(0개) 숨긴다. 자세한 해설은 아래 "주역 원문으로 읽기"에 있으며 링크로 이어 준다.
+function renderShiftSummary(r, en) {
+  const box = document.getElementById('shiftSummary');
+  if (!box) return;
+  if (!r.count) { box.classList.add('hidden'); box.replaceChildren(); return; }
+  const nodes = [yjEl('h3', '', t('classic.sum.title')),
+    yjEl('p', 'classic-rule-head', t('classic.countSome', { n: r.count, list: r.changing.join('·') }) + ' — ' + t('classic.rule.' + r.ruleId))];
+  r.passages.filter(p => p.role === 'primary').forEach(p => {
+    const item = yjEl('div', 'shift-summary-item');
+    item.appendChild(yjEl('p', 'classic-sub', t('classic.sum.read') + ' · ' + yjPassageTitle(p)));
+    item.appendChild(yjEl('p', 'classic-han', p.data.text));
+    if (!en) {
+      if (p.data.modern) item.appendChild(yjEl('p', 'classic-modern', p.data.modern));
+      if (p.data.message) item.appendChild(yjEl('p', 'classic-message', p.data.message));
+    }
+    nodes.push(item);
+  });
+  const more = yjEl('button', 'secondary shift-summary-more', t('classic.sum.more'));
+  more.type = 'button';
+  more.addEventListener('click', () => { const b = document.getElementById('classicBlock'); if (b) b.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+  nodes.push(more);
+  box.replaceChildren(...nodes);
+  box.classList.remove('hidden');
+}
+
 function renderClassicBlock(info) {
   const body = document.getElementById('classicBody');
   if (!body || !info) return;
@@ -141,6 +167,7 @@ function renderClassicBlock(info) {
   const values = info.lineList.map(l => l.value);
   updateShiftNote(values);
   if (!yjInterpreter) {
+    const sb = document.getElementById('shiftSummary'); if (sb) { sb.classList.add('hidden'); sb.replaceChildren(); }
     const status = yjEl('p', 'classic-status', t(yjFailed ? 'classic.loadFail' : 'classic.loading'));
     if (yjFailed) {   // 실패 후에도 다시 시도할 수 있게 한다
       const retry = yjEl('button', 'secondary', t('classic.retry'));
@@ -159,6 +186,7 @@ function renderClassicBlock(info) {
   catch (e) { console.error(e); body.replaceChildren(yjEl('p', 'classic-status', t('classic.loadFail'))); return; }
   const en = getLang() === 'en';
 
+  renderShiftSummary(r, en);
   const nodes = [yjEl('p', 'classic-intro', t('classic.intro'))];
 
   // 적용한 규칙 + 근거

@@ -860,3 +860,18 @@ html, body { -webkit-text-size-adjust: 100%; }
 /* 상전(대상·소상) 블록 */
 .classic-xiang { margin: 10px 0; padding: 8px 10px; border-left: 3px solid var(--border); }
 .classic-xiang-label { margin: 0 0 4px; font-size: 0.8rem; color: var(--sub); }
+
+/* 공유하기 창: QR 은 테마와 무관하게 항상 흰 바탕·검은 모듈(스캔 안정성) */
+.share-body { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.share-body .hint { margin: 0; text-align: center; }
+.share-qr { width: min(240px, 70vw); aspect-ratio: 1; background: #fff; border-radius: 10px; padding: 6px; box-sizing: border-box; border: 1px solid var(--border); }
+.share-qr svg { display: block; width: 100%; height: 100%; }
+.share-url-row { display: flex; gap: 8px; width: 100%; }
+.share-url { flex: 1; min-width: 0; font: inherit; font-size: 0.78rem; padding: 9px 8px; border: 1px solid var(--border); border-radius: 10px; background: var(--ghost-bg); color: inherit; }
+.share-copy { white-space: nowrap; }
+.share-status { min-height: 1.3em; }
+
+/* 이번 변효 한눈에 */
+.shift-summary { border-left: 3px solid var(--accent); padding-left: 12px; }
+.shift-summary-item { margin: 8px 0; }
+.shift-summary-more { margin-top: 6px; }

@@ -18,7 +18,7 @@
 
       <p class="term-note" data-i18n-html="result.termNote">
         <b>본괘</b>는 지금의 모습, <b>지괘</b>는 변화 후의 모습입니다.
-        <b>바뀌는 효</b>는 붉게 표시된 자리이며, 아래에서부터 1효·2효…로 셉니다.
+        <b>변효</b>(바뀌는 효)는 붉게 표시된 자리이며, 아래에서부터 1효·2효…로 셉니다.
       </p>
       <div class="hex-compare" id="hexCompare"></div>
       <p class="classic-shift-note hidden" id="classicShiftNote"></p>
@@ -29,6 +29,7 @@
           <h3 data-i18n="result.core">핵심 해석</h3>
           <p id="coreReading"></p>
         </div>
+        <div class="section-block shift-summary hidden" id="shiftSummary"></div>
         <div class="section-block">
           <h3 data-i18n="result.example">이런 경우라면</h3>
           <p id="exampleQuestion" class="question-echo"></p>
