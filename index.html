@@ -25,14 +25,14 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <aside id="pwaInstallBanner" aria-label="앱 설치" data-i18n-aria="pwa.aria" style="display:none; margin:12px auto; padding:12px 14px; max-width:900px; border:1px solid #8f5a35; border-radius:12px; background:#2b1d13; color:#f5ebdf;">
-    <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
-      <div style="flex:1; min-width:180px;">
+  <aside id="pwaInstallBanner" class="pwa-banner" aria-label="앱 설치" data-i18n-aria="pwa.aria" style="display:none;">
+    <div class="pwa-banner-row">
+      <div class="pwa-banner-text">
         <strong data-i18n="pwa.title">주역점 앱 설치</strong>
-        <div id="pwaInstallMessage" data-i18n="pwa.msg.default" style="font-size:.9rem; margin-top:4px;">홈 화면에 추가하면 앱처럼 빠르게 열 수 있습니다.</div>
+        <div id="pwaInstallMessage" class="pwa-banner-msg" data-i18n="pwa.msg.default">홈 화면에 추가하면 앱처럼 빠르게 열 수 있습니다.</div>
       </div>
-      <button type="button" id="pwaInstallButton" data-i18n="pwa.install" style="padding:9px 13px; border:0; border-radius:8px; background:#cda078; color:#1a110b; font-weight:700;">설치하기</button>
-      <button type="button" id="pwaInstallClose" aria-label="설치 안내 닫기" data-i18n-aria="pwa.closeAria" data-i18n="pwa.close" style="padding:8px 10px; border:1px solid #8f5a35; border-radius:8px; background:transparent; color:#f5ebdf;">닫기</button>
+      <button type="button" id="pwaInstallButton" class="pwa-banner-install" data-i18n="pwa.install">설치하기</button>
+      <button type="button" id="pwaInstallClose" class="pwa-banner-close" aria-label="설치 안내 닫기" data-i18n-aria="pwa.closeAria" data-i18n="pwa.close">닫기</button>
     </div>
   </aside>
   <div class="app">
@@ -125,13 +125,14 @@
   <script src="hexmeta.js?v=20261106"></script>
   <script src="hexagrams.js"></script>
   <script src="i18n.js"></script>
-  <script src="store.js"></script>
-  <script src="result-card.js?v=20261112"></script>
+  <script src="store.js?v=20261117"></script>
+  <script src="result-card.js?v=20261117"></script>
   <script src="core.js"></script>
   <script src="divination.js?v=20261105"></script>
-  <script src="classic-view.js?v=20261112"></script>
+  <script src="classic-view.js?v=20261117"></script>
   <script src="qr.js?v=20261111"></script>
-  <script src="menu.js"></script>
-  <script src="index.js"></script>
+  <script src="menu.js?v=20261117"></script>
+  <script src="index.js?v=20261117"></script>
+  <script src="sw-register.js?v=20261117"></script>
   <script src="pwa-install.js"></script>
 </body></html>

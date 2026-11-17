@@ -184,6 +184,13 @@ tapZone.addEventListener('pointerup', e => {
   mixEntropy(e.timeStamp, e.clientX, e.clientY, performance.now() - pointerDownAt);
 });
 tapZone.addEventListener('click', tap);
+// 키보드(Enter·Space)로도 뽑을 수 있게 한다. 뽑기 영역이 role="button" 이므로 같은 동작을 해야 한다. (서시법 화면과 동일)
+tapZone.addEventListener('keydown', e => {
+  if ((e.key === 'Enter' || e.key === ' ') && !e.repeat && !busy && lines.length < 6) {
+    e.preventDefault();
+    tap();
+  }
+});
 autoBtn.addEventListener('click', autoDraw);
 resetBtn.addEventListener('click', resetAll);
 

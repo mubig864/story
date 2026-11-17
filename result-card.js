@@ -26,7 +26,7 @@
       <p class="lang-note hidden" id="langNote" data-i18n="result.langNote"></p>
       <div class="result-stack">
         <div class="section-block">
-          <h3 data-i18n="result.core">핵심 해석</h3>
+          <h3 id="coreHeading" data-i18n="result.core">핵심 해석</h3>
           <p id="coreReading"></p>
         </div>
         <div class="section-block shift-summary hidden" id="shiftSummary"></div>
@@ -40,7 +40,8 @@
           <p id="situationMeaning"></p>
         </div>
         <div class="section-block">
-          <h3 data-i18n="result.change">변화의 방향</h3>
+          <h3 data-i18n="result.change">변화의 방향 (참고)</h3>
+          <p class="classic-note" data-i18n="result.changeNote"></p>
           <div id="changeText" class="change-text"></div>
         </div>
         <div class="section-block">

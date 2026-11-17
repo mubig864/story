@@ -25,6 +25,19 @@ const MENU_ITEMS = [
   { id: 'contact',  key: 'menu.contact',  icon: 'mail', href: 'mailto:mubig864@gmail.com' }
 ];
 
+// 이 앱은 모듈 없이 전역 스크립트를 순서대로 불러오므로, 순서가 어긋나면 나중에 알기 어려운 오류가 난다.
+// menu.js 가 쓰는 전역 함수가 없으면 곧바로 원인을 콘솔에 알린다. (필요한 로드 순서: hexmeta → hexagrams → i18n → store → core → qr → menu)
+(function checkLoadOrder() {
+  // (CSP 가 eval 을 막으므로 이름을 하나씩 typeof 로 확인한다)
+  const present = {
+    t: typeof t, onLangChange: typeof onLangChange, setLang: typeof setLang, getSettings: typeof getSettings, setTheme: typeof setTheme,
+    vaultList: typeof vaultList, analyzeValues: typeof analyzeValues, miniHexagram: typeof miniHexagram, shortName: typeof shortName,
+    showToast: typeof showToast, QRCodeLite: typeof QRCodeLite
+  };
+  const missing = Object.keys(present).filter(n => present[n] === 'undefined');
+  if (missing.length) console.error('menu.js: 먼저 불러와야 할 스크립트가 없습니다 →', missing.join(', '), '(스크립트 로드 순서를 확인하세요)');
+})();
+
 (function () {
   const menuBtn = document.getElementById('menuBtn');
   if (!menuBtn) return;

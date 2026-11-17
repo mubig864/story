@@ -8,11 +8,15 @@ const VAULT_MAX = 300;
 const memoryStore = {};
 let storagePersistent = true;
 
+// 쓰기가 실패한 값(저장 공간 초과·저장소 차단)은 메모리에 두고, 읽을 때 메모리가 있으면 그 값을 먼저 돌려 준다.
+// (예전에는 저장소 '접근'이 막힌 경우에만 메모리를 읽어서, 용량 초과로 쓰기만 실패하면 방금 저장한 기록이 목록에서 사라졌다.)
 function lsGet(key) {
-  try { return localStorage.getItem(key); } catch (e) { storagePersistent = false; return memoryStore[key] === undefined ? null : memoryStore[key]; }
+  if (Object.prototype.hasOwnProperty.call(memoryStore, key)) return memoryStore[key];
+  try { return localStorage.getItem(key); } catch (e) { storagePersistent = false; return null; }
 }
 function lsSet(key, value) {
-  try { localStorage.setItem(key, value); return true; } catch (e) { storagePersistent = false; memoryStore[key] = value; return false; }
+  try { localStorage.setItem(key, value); delete memoryStore[key]; return true; }
+  catch (e) { storagePersistent = false; memoryStore[key] = value; return false; }
 }
 
 // ===== 설정 =====
@@ -63,11 +67,31 @@ function validRecord(r) {
     && r.values.every(v => v === 6 || v === 7 || v === 8 || v === 9);
 }
 
+// 저장된 배열 전체(검증하지 않은 항목 포함). 쓰기는 이 배열을 기준으로 해서, 이 버전이 알아보지 못하는 기록
+// (나중 버전이 만든 형식 등)을 새 기록을 저장하는 김에 지워 버리지 않는다.
+function vaultRaw() {
+  const text = lsGet(VAULT_KEY);
+  if (!text) return [];
+  try {
+    const arr = JSON.parse(text);
+    return Array.isArray(arr) ? arr.filter(r => r && typeof r === 'object') : [];
+  } catch (e) {
+    // 내용이 깨진 경우: 덮어쓰기 전에 원본을 한 번 따로 남겨 둔다.
+    if (lsGet(VAULT_KEY + '.corrupt') === null) lsSet(VAULT_KEY + '.corrupt', text);
+    return [];
+  }
+}
+
+// 화면에 보여 줄 유효한 기록만, 최신순으로
 function vaultList() {
-  let arr = [];
-  try { arr = JSON.parse(lsGet(VAULT_KEY)) || []; } catch (e) { arr = []; }
-  if (!Array.isArray(arr)) arr = [];
-  return arr.filter(validRecord).sort((a, b) => (b.savedAt || 0) - (a.savedAt || 0));
+  return vaultRaw().filter(validRecord).sort((a, b) => (b.savedAt || 0) - (a.savedAt || 0));
+}
+
+// 유효한 기록은 최대 VAULT_MAX 개(오래된 것부터 버림), 알아보지 못하는 항목은 그대로 둔다.
+function capVault(raw) {
+  const valid = raw.filter(validRecord).sort((a, b) => (b.savedAt || 0) - (a.savedAt || 0));
+  const keep = new Set(valid.slice(0, VAULT_MAX));
+  return raw.filter(r => !validRecord(r) || keep.has(r));
 }
 
 function vaultWrite(arr) {
@@ -87,23 +111,23 @@ function vaultAdd({ values, question, method }) {
     question: (question || '').slice(0, 500),
     method: method === 'yarrow' ? 'yarrow' : 'simple'
   };
-  const list = vaultList();
-  list.unshift(record);
-  const ok = vaultWrite(list.slice(0, VAULT_MAX));
+  const raw = vaultRaw();
+  raw.unshift(record);
+  const ok = vaultWrite(capVault(raw));
   return { ok, id: record.id, record };
 }
 
 // 저장된 기록의 질문만 고친다. 성공하면 true.
 function vaultUpdateQuestion(id, question) {
-  const list = vaultList();
-  const rec = list.find(r => r.id === id);
+  const raw = vaultRaw();
+  const rec = raw.find(r => validRecord(r) && r.id === id);
   if (!rec) return false;
   rec.question = (question || '').trim().slice(0, 500);
-  return vaultWrite(list);
+  return vaultWrite(raw);
 }
 
 function vaultRemove(id) {
-  return vaultWrite(vaultList().filter(r => r.id !== id));
+  return vaultWrite(vaultRaw().filter(r => r.id !== id));
 }
 function vaultClear() {
   return vaultWrite([]);

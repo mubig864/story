@@ -27,13 +27,7 @@
     (/Android/i.test(ua) && /;\s*wv\)/.test(ua)) ||
     (isIOS && !/Safari\//i.test(ua));   // 아이폰에서 Safari/Chrome/Edge/Firefox가 아닌 앱 안 화면(WebView)
 
-  if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) {
-    window.addEventListener("load", () => {
-      navigator.serviceWorker.register("./sw.js").catch((error) => {
-        console.warn("서비스 워커 등록 실패:", error);
-      });
-    });
-  }
+  // 서비스워커 등록은 sw-register.js(모든 페이지 공용)가 맡습니다.
 
   window.addEventListener("beforeinstallprompt", (event) => {
     if (isInApp) return;

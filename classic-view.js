@@ -1,7 +1,7 @@
 'use strict';
 /* classic-view.js — 결과 카드의 "주역 원문으로 읽기" 영역 (화면 표시 전용)
    - 해석 규칙·계산은 divination.js, 해설 데이터는 yijing-data.js 에 있고, 여기서는 그 결과를 DOM 으로 그리기만 합니다.
-   - yijing-data.js(약 220KB)는 결과가 처음 필요할 때 한 번만 늦게 불러옵니다(첫 화면 로딩에 영향 없음).
+   - yijing-data.js(약 550KB)는 결과가 처음 필요할 때 한 번만 늦게 불러옵니다(첫 화면 로딩에 영향 없음).
    - 로드 순서: ... core.js → divination.js → classic-view.js → (페이지별 js)
    - core.js 의 setResultCardText() 끝에서 renderClassicBlock(info) 를 호출합니다. */
 
@@ -134,6 +134,22 @@ function updateShiftNote(values) {
   el.classList.toggle('hidden', !key);
 }
 
+// 변효가 4개 이상이면 고변점은 지괘(또는 용구·용육)를 중심으로 읽는다. 그런데 "핵심 해석"은 본괘 기준의 일반 풀이라서,
+// 규칙상 중심 대목 카드(#shiftSummary)를 맨 위로 올리고 "핵심 해석"은 '본괘의 일반 풀이(참고)'로 이름을 바꿔 순서를 규칙과 맞춘다.
+// 3개 이하이면 원래 자리(핵심 해석 바로 아래)로 되돌린다.
+function arrangeByShift(count) {
+  const sum = document.getElementById('shiftSummary');
+  const head = document.getElementById('coreHeading');
+  const core = head && head.closest('.section-block');
+  if (!sum || !core || !core.parentNode) return;
+  const ruleFirst = count >= 4;
+  if (ruleFirst) core.parentNode.insertBefore(sum, core);
+  else if (sum.previousElementSibling !== core) core.parentNode.insertBefore(sum, core.nextSibling);
+  const key = ruleFirst ? 'result.core.ben' : 'result.core';
+  head.setAttribute('data-i18n', key);   // 언어를 바꿀 때 applyI18n 이 되돌리지 않도록 속성도 함께 바꾼다
+  head.textContent = t(key);
+}
+
 // "이번 변효 한눈에": 핵심 해석 바로 아래에, 이번 점에서 읽을 대목(중심 대목)의 원문·쉬운 풀이·한 줄 메시지를 먼저 보여 준다.
 // 변효가 없으면(0개) 숨긴다. 자세한 해설은 아래 "주역 원문으로 읽기"에 있으며 링크로 이어 준다.
 function renderShiftSummary(r, en) {
@@ -166,6 +182,7 @@ function renderClassicBlock(info) {
   yjLastInfo = info;
   const values = info.lineList.map(l => l.value);
   updateShiftNote(values);
+  arrangeByShift(values.filter(v => v === 6 || v === 9).length);
   if (!yjInterpreter) {
     const sb = document.getElementById('shiftSummary'); if (sb) { sb.classList.add('hidden'); sb.replaceChildren(); }
     const status = yjEl('p', 'classic-status', t(yjFailed ? 'classic.loadFail' : 'classic.loading'));
@@ -194,6 +211,12 @@ function renderClassicBlock(info) {
   const count = r.count ? t('classic.countSome', { n: r.count, list: r.changing.join('·') }) : t('classic.countNone');
   const rh = yjEl('p', 'classic-rule-head'); rh.append(yjEl('b', '', t('classic.ruleTitle')), document.createTextNode(' · ' + count));
   rule.append(rh, yjEl('p', '', t('classic.rule.' + r.ruleId)));
+  if (!r.count) {   // 변효 없음: 『역학계몽』 "以內卦為貞, 外卦為悔"
+    const tri = (name, han) => name + '(' + han + ')';
+    rule.appendChild(yjEl('p', '', t('classic.rule.none.tei', {
+      inner: tri(r.ben.lower, r.ben.lowerHan), outer: tri(r.ben.upper, r.ben.upperHan)
+    })));
+  }
   const basis = yjEl('details', 'more');
   basis.append(yjEl('summary', '', t('classic.basisSummary')), yjEl('p', 'classic-basis', t('classic.basis')));
   rule.appendChild(basis);

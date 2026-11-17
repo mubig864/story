@@ -875,3 +875,13 @@ html, body { -webkit-text-size-adjust: 100%; }
 .shift-summary { border-left: 3px solid var(--accent); padding-left: 12px; }
 .shift-summary-item { margin: 8px 0; }
 .shift-summary-more { margin-top: 6px; }
+
+/* ===== 앱 설치 안내 배너 (테마 변수 사용: 밝은 테마에서도 어울리게) ===== */
+.pwa-banner { margin: 12px auto; padding: 12px 14px; width: calc(100% - 28px); max-width: 900px; box-sizing: border-box;
+  border: 1px solid var(--accent-2); border-radius: 12px; background: var(--surface); color: var(--text); }
+.pwa-banner-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.pwa-banner-text { flex: 1; min-width: 180px; }
+.pwa-banner-msg { font-size: .9rem; margin-top: 4px; color: var(--sub); }
+.pwa-banner-install { padding: 9px 13px; border: 0; border-radius: 8px; background: var(--accent); color: var(--bg); font-weight: 700; cursor: pointer; }
+.pwa-banner-close { padding: 8px 10px; border: 1px solid var(--accent-2); border-radius: 8px; background: transparent; color: var(--text); cursor: pointer; }
+.pwa-banner-install:focus-visible, .pwa-banner-close:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }

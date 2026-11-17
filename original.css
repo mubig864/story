@@ -330,3 +330,9 @@
       0%   { transform: scale(1); opacity: 1; }
       100% { transform: scale(6); opacity: 0; }
     }
+
+/* ===== 모션 감소 설정 존중: 시초 이동·강조 애니메이션과 전환을 끈다 (위치·문구는 그대로 바뀌므로 기능은 같다) ===== */
+@media (prefers-reduced-motion: reduce) {
+  .stalk, .stalk-stage, .stalk-tag, .stalk-caption, .stalk-steps span, .stalk-result { transition: none !important; }
+  .stalk.pulse, .stalk-caption.swap, .stalk-result.final b, .tap-burst, .touch-ripple { animation: none !important; }
+}
