@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ko" data-title-key="doc.title.index"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://www.googletagmanager.com https://*.google-analytics.com https://*.g.doubleclick.net; connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://*.g.doubleclick.net; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-5CH5ZKEJT8"></script>
+<script src="gtag-init.js"></script>
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="주역점">
+  <meta property="og:description" content="주역점으로 현재 상황과 변화의 방향을 살펴보세요.">
+  <meta property="og:url" content="https://mubig864.github.io/story/">
+  <meta property="og:image" content="https://mubig864.github.io/story/maskable-512.png">
+  <meta name="twitter:card" content="summary">
+  <meta name="theme-color" content="#1a110b">
+  <meta name="description" content="주역점으로 현재 상황과 변화의 방향을 살펴보세요." data-i18n-content="doc.desc">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/png" sizes="192x192" href="192.png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <script src="init.js"></script>
+  <title>주역점 앱</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <aside id="pwaInstallBanner" class="pwa-banner" aria-label="앱 설치" data-i18n-aria="pwa.aria" style="display:none;">
+    <div class="pwa-banner-row">
+      <div class="pwa-banner-text">
+        <strong data-i18n="pwa.title">주역점 앱 설치</strong>
+        <div id="pwaInstallMessage" class="pwa-banner-msg" data-i18n="pwa.msg.default">홈 화면에 추가하면 앱처럼 빠르게 열 수 있습니다.</div>
+      </div>
+      <button type="button" id="pwaInstallButton" class="pwa-banner-install" data-i18n="pwa.install">설치하기</button>
+      <button type="button" id="pwaInstallClose" class="pwa-banner-close" aria-label="설치 안내 닫기" data-i18n-aria="pwa.closeAria" data-i18n="pwa.close">닫기</button>
+    </div>
+  </aside>
+  <div class="app">
+    <section class="hero">
+      <div class="header-top">
+        <div class="header-left">
+          <button type="button" class="menu-btn" id="menuBtn" aria-label="메뉴 열기" data-i18n-aria="menu.open">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+          </button>
+          <h1 data-i18n="app.name">주역점</h1>
+        </div>
+        <a href="original.html" class="top-link" data-i18n="nav.toOriginal">전통기법으로 보기</a>
+      </div>
+      <p class="sub" data-i18n="app.sub">주역점은 운명이나 미래를 예측하지 않습니다. 선택의 갈림길에서 지혜를 얻고, 내가 처한 상황에서 한 걸음 물러나 문제를 보다 객관적으로 바라보며, 나아갈 방향을 스스로 찾도록 돕는 지혜입니다.</p>
+    </section>
+
+    <section class="card controls layout">
+      <div>
+        <h2 data-i18n="q.heading">지금 상황을 이해하고 변화의 방향 찾기</h2>
+        <textarea id="question" data-i18n-placeholder="q.placeholder" placeholder="(질문 예시)&#10;• 이직 후 어떤 상황에 직면하며, 주의할 점은?&#10;• 현재 OO상황의 원인과 대처 방법은?"></textarea>
+        <p class="ask-once-note" data-i18n="q.onceNote"></p>
+        <p class="ask-once-note" data-i18n="q.rightNote"></p>
+      </div>
+      <div class="draw-layout">
+        <div class="draw-panel">
+          <div class="progress">
+            <strong id="progressText">현재 효: 0 / 6</strong>
+            <span class="muted" id="tapInfo">탭 1번 = 효 1개</span>
+          </div>
+          <div id="tapZone" class="tap-zone" role="button" tabindex="0" aria-label="효 뽑기 탭 영역" data-i18n-aria="tap.aria">
+            <div class="tap-instruction">
+              <svg class="bagua-graphic" viewBox="0 0 120 120" role="img" aria-label="팔괘 이미지" data-i18n-aria="bagua.aria" xmlns="http://www.w3.org/2000/svg" focusable="false">
+                <circle cx="60" cy="60" r="55" fill="#3a281c" stroke="#cda078" stroke-width="2"></circle>
+                <circle cx="60" cy="60" r="43" fill="none" stroke="#cda078" stroke-opacity=".55" stroke-width="1"></circle>
+                <g fill="#f5ebdf">
+                  <g transform="translate(60 17)"><rect x="-10" y="-6" width="20" height="3" rx="1"></rect><rect x="-10" y="0" width="20" height="3" rx="1"></rect><rect x="-10" y="6" width="20" height="3" rx="1"></rect></g>
+                  <g transform="translate(90 30) rotate(45)"><rect x="-10" y="-6" width="20" height="3" rx="1"></rect><rect x="-10" y="0" width="8" height="3" rx="1"></rect><rect x="2" y="0" width="8" height="3" rx="1"></rect><rect x="-10" y="6" width="20" height="3" rx="1"></rect></g>
+                  <g transform="translate(103 60) rotate(90)"><rect x="-10" y="-6" width="8" height="3" rx="1"></rect><rect x="2" y="-6" width="8" height="3" rx="1"></rect><rect x="-10" y="0" width="20" height="3" rx="1"></rect><rect x="-10" y="6" width="8" height="3" rx="1"></rect><rect x="2" y="6" width="8" height="3" rx="1"></rect></g>
+                  <g transform="translate(90 90) rotate(135)"><rect x="-10" y="-6" width="20" height="3" rx="1"></rect><rect x="-10" y="0" width="8" height="3" rx="1"></rect><rect x="2" y="0" width="8" height="3" rx="1"></rect><rect x="-10" y="6" width="8" height="3" rx="1"></rect><rect x="2" y="6" width="8" height="3" rx="1"></rect></g>
+                  <g transform="translate(60 103)"><rect x="-10" y="-6" width="8" height="3" rx="1"></rect><rect x="2" y="-6" width="8" height="3" rx="1"></rect><rect x="-10" y="0" width="20" height="3" rx="1"></rect><rect x="-10" y="6" width="8" height="3" rx="1"></rect><rect x="2" y="6" width="8" height="3" rx="1"></rect></g>
+                  <g transform="translate(30 90) rotate(45)"><rect x="-10" y="-6" width="20" height="3" rx="1"></rect><rect x="-10" y="0" width="20" height="3" rx="1"></rect><rect x="-10" y="6" width="8" height="3" rx="1"></rect><rect x="2" y="6" width="8" height="3" rx="1"></rect></g>
+                  <g transform="translate(17 60) rotate(90)"><rect x="-10" y="-6" width="20" height="3" rx="1"></rect><rect x="-10" y="0" width="8" height="3" rx="1"></rect><rect x="2" y="0" width="8" height="3" rx="1"></rect><rect x="-10" y="6" width="20" height="3" rx="1"></rect></g>
+                  <g transform="translate(30 30) rotate(135)"><rect x="-10" y="-6" width="8" height="3" rx="1"></rect><rect x="2" y="-6" width="8" height="3" rx="1"></rect><rect x="-10" y="0" width="20" height="3" rx="1"></rect><rect x="-10" y="6" width="20" height="3" rx="1"></rect></g>
+                </g>
+                <circle cx="60" cy="60" r="15" fill="#3a281c" stroke="#8f5a35" stroke-width="2"></circle>
+                <text x="60" y="65" text-anchor="middle" fill="#ffffff" font-family="serif" font-size="16" font-weight="700">易</text>
+              </svg>
+              <div data-i18n="tap.hint">화면을 터치해 효를 뽑으세요</div>
+              <div class="tap-count" id="tapCount">0</div>
+            </div>
+          </div>
+          <div id="livePreview" class="section-block" style="display:none;">
+            <h3 data-i18n="live.heading">내가 뽑은 효</h3>
+            <div id="liveLinePreview" class="iching-line" style="min-height:28px;"></div>
+            <p id="liveLineText" class="sub" style="margin-top:8px;"></p>
+          </div>
+          <div class="btn-row">
+            <button class="ghost" id="resetBtn" data-i18n="btn.reset">다시 하기</button>
+            <button class="secondary" id="autoBtn" data-i18n="btn.auto">자동 뽑기</button>
+          </div>
+        </div>
+
+        <div class="stack-panel">
+          <h2 data-i18n="stack.heading">현재 만들어진 괘</h2>
+          <div id="hexagramStack" class="hexagram-stack"></div>
+        </div>
+      </div>
+    </section>
+
+    <div id="resultCardMount"></div>
+
+<footer class="author-footer">
+  <p class="footer-motto">生生之謂易</p>
+
+  <p class="footer-description" data-i18n="footer.desc">
+    우리는 끊임없는 변화 속에서 살아간다
+  </p>
+
+  <div class="footer-divider" aria-hidden="true">
+    <span>◇</span>
+  </div>
+
+  <p class="footer-copyright">
+    © 2026 Mubig. All rights reserved.
+  </p>
+</footer>
+
+  </div>
+
+  <script src="hexmeta.js?v=20261106"></script>
+  <script src="hexagrams.js"></script>
+  <script src="i18n.js"></script>
+  <script src="store.js?v=20261117"></script>
+  <script src="result-card.js?v=20261117"></script>
+  <script src="core.js"></script>
+  <script src="divination.js?v=20261105"></script>
+  <script src="classic-view.js?v=20261117"></script>
+  <script src="qr.js?v=20261111"></script>
+  <script src="menu.js?v=20261117"></script>
+  <script src="index.js?v=20261117"></script>
+  <script src="sw-register.js?v=20261117"></script>
+  <script src="pwa-install.js"></script>
+</body></html>

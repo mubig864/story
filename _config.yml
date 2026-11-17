@@ -1,0 +1,4 @@
+# GitHub Pages(Jekyll) 배포에서 제외할 개발용 파일: 데이터 원본·빌드/검사 스크립트·변경 기록
+exclude:
+  - data-src
+  - CHANGES.md
