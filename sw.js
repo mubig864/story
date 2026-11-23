@@ -1,10 +1,15 @@
-// 배포 시 CACHE_VERSION만 올리면 이전 캐시가 자동 정리됩니다.
-const CACHE_VERSION = "20261123-2";
+// 서비스워커 — 한 번에 받은 파일 묶음(한 버전)을 캐시에서 그대로 내주는 "캐시 우선" 구조.
+//  · 배포 시: CACHE_VERSION 만 올립니다. (크고 잘 안 바뀌는 yijing-data.js·아이콘은 STATIC_VERSION 이 따로 있고,
+//    `node data-src/build-yijing-data.js` 가 내용 해시로 자동 갱신합니다 → 해설·아이콘이 그대로면 다시 받지 않음)
+//  · 같은 버전의 HTML·JS·CSS 가 항상 함께 쓰이므로 서로 다른 버전이 섞이지 않습니다.
+//  · 새 SW 가 인계하면 sw-register.js 가 (작업 중이 아닐 때) 화면을 한 번 새로 불러옵니다.
+const CACHE_VERSION = "20261124-1";
+const STATIC_VERSION = "6ca0826368";
 const CACHE_NAME = "juyeok-pwa-" + CACHE_VERSION;
+const STATIC_CACHE = "juyeok-static-" + STATIC_VERSION;
 const OFFLINE_URL = "./index.html";
-const NETWORK_TIMEOUT_MS = 5000;   // 느린 망에서는 이 시간이 지나면 캐시본을 먼저 보여 준다
 
-// 반드시 담겨야 하는 파일: 하나라도 못 받으면 설치를 실패로 처리해, 불완전한 새 캐시가 정상 캐시를 대체하지 않게 한다.
+// 반드시 담겨야 하는 파일: 하나라도 못 받으면 설치 실패 → 이전 버전이 그대로 유지된다.
 const CORE = [
   "./", "./index.html", "./original.html", "./hexagram-list.html", "./about.html",
   "./style.css", "./original.css",
@@ -12,63 +17,70 @@ const CORE = [
   "./core.js", "./divination.js", "./classic-view.js", "./menu.js", "./index.js", "./original.js", "./pwa-install.js",
   "./manifest.webmanifest", "./192.png"
 ];
-// 있으면 좋은 파일(용량이 크거나 늦게 불러오는 것): 못 받아도 설치는 성공하고, 나중에 쓰일 때 받아 저장한다.
-const OPTIONAL = ["./yijing-data.js", "./hexagrams_en.js", "./512.png", "./apple-touch-icon.png", "./maskable-512.png"];
+// 늦게 쓰이는 파일: 못 받아도 설치는 성공하고, 처음 쓰일 때(또는 다음 활성화 때) 받아 저장한다. 버전 묶음과 같이 갈아 끼운다.
+const OPTIONAL = ["./hexagrams_en.js"];
+// 크고 잘 안 바뀌는 파일: 배포마다 다시 받지 않고 STATIC_VERSION 이 바뀔 때만 새로 받는다.
+const STATIC = ["./yijing-data.js", "./512.png", "./apple-touch-icon.png", "./maskable-512.png"];
+
+const isStatic = (url) => STATIC.some((p) => new URL(p, self.location).pathname === url.pathname);
+// 저장 키에서 ?v= 같은 쿼리를 뺀다: 한 파일은 한 항목만 가지며, 지우고 다시 쓰는 사이에 비는 순간이 없다.
+const keyOf = (request) => { const u = new URL(request.url); u.search = ""; return new Request(u.href); };
+
+async function fill(cacheName, urls, tolerant) {
+  const cache = await caches.open(cacheName);
+  await Promise.all(urls.map(async (url) => {
+    const key = new Request(new URL(url, self.location).href);
+    if (await cache.match(key)) return;                 // 이미 있으면(같은 묶음) 다시 받지 않는다
+    try {
+      const res = await fetch(new Request(url, { cache: "reload" }));
+      if (!res.ok) throw new Error(url + " " + res.status);
+      await cache.put(keyOf(key), res);
+    } catch (e) { if (!tolerant) throw e; }
+  }));
+}
 
 self.addEventListener("install", (event) => {
   self.skipWaiting();
-  event.waitUntil(caches.open(CACHE_NAME).then(async (cache) => {
-    const add = (url) => cache.add(new Request(url, { cache: "reload" }));
+  event.waitUntil((async () => {
     try {
-      await Promise.all(CORE.map(add));                                 // 하나라도 실패하면 설치 실패 → 이전 버전 유지
+      await fill(CACHE_NAME, CORE, false);
     } catch (error) {
-      await caches.delete(CACHE_NAME);                                  // 덜 채워진 새 캐시는 버린다
+      await caches.delete(CACHE_NAME);                  // 덜 채워진 새 캐시는 버린다
       throw error;
     }
-    await Promise.all(OPTIONAL.map((url) => add(url).catch(() => {})));
-  }));
+    await Promise.all([fill(CACHE_NAME, OPTIONAL, true), fill(STATIC_CACHE, STATIC, true)]);
+  })());
 });
 
 self.addEventListener("activate", (event) => {
-  event.waitUntil(
-    caches.keys().then((keys) => Promise.all(
-      keys.filter((key) => key.startsWith("juyeok-pwa-") && key !== CACHE_NAME)
-          .map((key) => caches.delete(key))
-    )).then(() => self.clients.claim())
-  );
+  event.waitUntil((async () => {
+    const keys = await caches.keys();
+    await Promise.all(keys
+      .filter((k) => (k.startsWith("juyeok-pwa-") && k !== CACHE_NAME) || (k.startsWith("juyeok-static-") && k !== STATIC_CACHE))
+      .map((k) => caches.delete(k)));
+    await self.clients.claim();
+    // 설치 때 못 받은 선택 파일이 있으면 지금 한 번 더 시도한다(실패해도 무시).
+    await Promise.all([fill(CACHE_NAME, OPTIONAL, true), fill(STATIC_CACHE, STATIC, true)]).catch(() => {});
+  })());
 });
 
-// 같은 파일의 이전 버전(?v= 이 다른 항목)을 지우고 새로 저장한다. 서비스워커가 먼저 끝나지 않게 호출 쪽에서 waitUntil 한다.
-const putInCache = (request, response) => {
-  if (!response || !response.ok || response.type === "opaque") return Promise.resolve();
-  const copy = response.clone();
-  return caches.open(CACHE_NAME)
-    .then((cache) => cache.delete(request, { ignoreSearch: true }).then(() => cache.put(request, copy)))
-    .catch(() => {});
-};
+async function lookup(request) {
+  const key = keyOf(request);
+  const url = new URL(request.url);
+  const cache = await caches.open(isStatic(url) ? STATIC_CACHE : CACHE_NAME);
+  return { cache, key, hit: await cache.match(key) };
+}
 
-// 네트워크 우선: 항상 새 파일을 받아 HTML·JS·CSS 버전이 어긋나지 않게 한다(옛 JS 가 새 HTML 과 섞이는 문제 방지).
-// 오프라인이거나 응답이 늦으면 캐시본으로 대신한다. HTTP 캐시에 묶이지 않도록 매번 서버에 변경 여부를 확인한다(no-cache).
-async function networkFirst(event, request, fallbackUrl) {
-  const net = fetch(request, { cache: "no-cache" }).then((response) => {
-    event.waitUntil(putInCache(request, response));
-    return response;
-  });
-  net.catch(() => {});   // 시간 초과로 버려져도 처리되지 않은 오류가 남지 않게
-  let timer;
-  const timeout = new Promise((resolve) => { timer = setTimeout(resolve, NETWORK_TIMEOUT_MS, null); });
+async function cacheFirst(event, request) {
+  const { cache, key, hit } = await lookup(request);
+  if (hit) return hit;
   try {
-    const first = await Promise.race([net, timeout]);
-    clearTimeout(timer);
-    if (first) return first;
-    const slow = await caches.match(request, { ignoreSearch: true });
-    return slow || net;        // 캐시본이 없으면 끝까지 기다린다
+    const res = await fetch(request);
+    if (res.ok && res.type === "basic") event.waitUntil(cache.put(key, res.clone()).catch(() => {}));
+    return res;
   } catch (error) {
-    clearTimeout(timer);
-    const cached = await caches.match(request, { ignoreSearch: true });
-    if (cached) return cached;
-    if (fallbackUrl) {
-      const fallback = await caches.match(fallbackUrl);
+    if (request.mode === "navigate") {                  // 처음 보는 주소로 오프라인 이동 → 시작 화면
+      const fallback = await caches.match(OFFLINE_URL, { cacheName: CACHE_NAME });
       if (fallback) return fallback;
     }
     throw error;
@@ -79,5 +91,6 @@ self.addEventListener("fetch", (event) => {
   const request = event.request;
   const url = new URL(request.url);
   if (request.method !== "GET" || url.origin !== self.location.origin) return;
-  event.respondWith(networkFirst(event, request, request.mode === "navigate" ? OFFLINE_URL : null));
+  if (request.headers.has("range")) return;             // 부분 요청은 브라우저에 맡긴다
+  event.respondWith(cacheFirst(event, request));
 });

@@ -177,12 +177,12 @@ const HEXAGRAMS_EN = {
   "name": "Innocence (Wu Wang)",
   "keyword": "Sincerity without scheming",
   "summary": "Act naturally and honestly, without calculation or forcing.",
-  "core": "Wu Wang (无妄) shows thunder rolling beneath heaven so that all things move according to their nature, and it means acting just as you are, without falseness or vain expectations. If you act with an improper heart, unexpected disaster follows, and you should guard against luck-seeking, like hoping to harvest without plowing the field.",
+  "core": "Wu Wang (无妄) shows thunder rolling beneath heaven so that all things move according to their nature, and it means acting just as you are, without falseness or vain expectations. If you act with an improper heart, unexpected disaster follows, and you should guard against luck-seeking, such as counting on the harvest before you have even plowed.",
   "situation": "This is a time when sincerity works better than calculation and show. Even if something unexpected happens, you can avoid fault by holding to your own duty as you respond.",
   "example": "If someone who received an investment offer promising big returns in a short time receives this hexagram, it means: guard against the wish for a lucky windfall, and approach it honestly with proven methods.",
   "actions": [
    "Check whether there is anything you are hiding or exaggerating right now.",
-   "If you have a plan to get something without paying for it, change it into a realistic alternative.",
+   "If you have a plan driven by the expected payoff, refocus it on doing the work itself well.",
    "When something unexpected happens, respond according to your principles."
   ],
   "practical": [

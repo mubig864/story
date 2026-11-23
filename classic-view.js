@@ -121,28 +121,29 @@ function yjPassageTitle(p) {
   return t('classic.title.yao.' + p.side, { name, label: p.label, pos: t('classic.pos.' + p.pos) });
 }
 
-// 변효가 4개 이상이면 규칙상 지괘(또는 용구·용육)가 중심이라, 본괘 기준의 위 해설과 읽는 순서가 달라짐을 알린다.
+const SHIFT_NOTE_KEY = { one: 'classic.shift.one', two: 'classic.shift.two', 'three-back': 'classic.shift.three-back',
+  four: 'classic.shift', five: 'classic.shift', six: 'classic.shift', 'six-qian': 'classic.shift.qian', 'six-kun': 'classic.shift.kun' };
+function ruleOf(values) { return typeof YijingDivination !== 'undefined' ? YijingDivination.ruleFor(values) : 'none'; }
+
+// 변효가 있고 규칙상 지괘(또는 용구·용육)가 중심이라, 본괘 기준의 위 해설과 읽는 순서가 달라짐을 알린다.
 function updateShiftNote(values) {
   const el = document.getElementById('classicShiftNote');
   if (!el) return;
   const n = values.filter(v => v === 6 || v === 9).length;
-  let key = null;
-  if (n === 6 && values.every(v => v === 9)) key = 'classic.shift.qian';
-  else if (n === 6 && values.every(v => v === 6)) key = 'classic.shift.kun';
-  else if (n >= 4) key = 'classic.shift';
+  const key = SHIFT_NOTE_KEY[ruleOf(values)] || null;   // 변효 없음·앞 열 가지 3효변은 안내 없음(핵심 해석이 곧 중심)
   if (key) el.textContent = t(key, { n });
   el.classList.toggle('hidden', !key);
 }
 
-// 변효가 4개 이상이면 고변점은 지괘(또는 용구·용육)를 중심으로 읽는다. 그런데 "핵심 해석"은 본괘 기준의 일반 풀이라서,
-// 규칙상 중심 대목 카드(#shiftSummary)를 맨 위로 올리고 "핵심 해석"은 '본괘의 일반 풀이(참고)'로 이름을 바꿔 순서를 규칙과 맞춘다.
-// 3개 이하이면 원래 자리(핵심 해석 바로 아래)로 되돌린다.
-function arrangeByShift(count) {
+// "핵심 해석"은 본괘 기준의 일반 풀이라서, 고변점이 읽으라는 대목(#shiftSummary)이 따로 있으면(변효 1·2개, 3개 중 뒤 열 가지, 4~6개)
+// 그 카드를 맨 위로 올리고 "핵심 해석"은 '본괘의 일반 풀이(참고)'로 이름을 바꾼다.
+// 변효 없음·앞 열 가지 3효변은 본괘가 중심이므로 원래 자리(핵심 해석 바로 아래)로 되돌린다.
+function arrangeByShift(values) {
   const sum = document.getElementById('shiftSummary');
   const head = document.getElementById('coreHeading');
   const core = head && head.closest('.section-block');
   if (!sum || !core || !core.parentNode) return;
-  const ruleFirst = count >= 4;
+  const rule = ruleOf(values), ruleFirst = rule !== 'none' && rule !== 'three-front';
   if (ruleFirst) core.parentNode.insertBefore(sum, core);
   else if (sum.previousElementSibling !== core) core.parentNode.insertBefore(sum, core.nextSibling);
   const key = ruleFirst ? 'result.core.ben' : 'result.core';
@@ -182,7 +183,7 @@ function renderClassicBlock(info) {
   yjLastInfo = info;
   const values = info.lineList.map(l => l.value);
   updateShiftNote(values);
-  arrangeByShift(values.filter(v => v === 6 || v === 9).length);
+  arrangeByShift(values);
   if (!yjInterpreter) {
     const sb = document.getElementById('shiftSummary'); if (sb) { sb.classList.add('hidden'); sb.replaceChildren(); }
     const status = yjEl('p', 'classic-status', t(yjFailed ? 'classic.loadFail' : 'classic.loading'));

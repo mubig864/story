@@ -404,6 +404,7 @@ function resetAll() {
 let lastTouch = null;
 let swipeStart = null;
 let gestureRatios = null;
+let kbRatio = null;   // 키보드(←/→)로 옮긴 가르기 위치
 let pendingSplitRatios = [];
 let splitWaiter = null;
 let previewStalkCount = 49;
@@ -452,6 +453,7 @@ function updateSplitPreview(clientX, forcedRatio) {
 // 새 효를 뽑기 전 화면은 항상 처음(49개, 가운데 기준)과 같게 되돌린다
 // (페이지를 처음 열었을 때와 똑같이: 막대기 49개, 가르기 표시 없음, '왼쪽 무리/오른쪽 무리' 문구)
 function resetSplitPreview() {
+  kbRatio = null;
   previewStalkCount = 49;
   lastRoundRemoved = 0;
   stalkPreview.style.width = '';
@@ -484,6 +486,7 @@ function waitForUserSplit(roundIndex) {
   tapZone.classList.remove('stage-on');
   tapZone.classList.add('waiting-split');
   previewStalkCount = Math.max(2, 49 - (lastRoundRemoved || 0));
+  kbRatio = null;
   swipeInstruction.textContent = t('orig.dragInfo', { n: roundIndex + 1 });
   splitProgressEl.textContent = t('orig.progress', { n: roundIndex + 1 });
   const rect = stalkPreview.getBoundingClientRect();
@@ -520,7 +523,6 @@ stalkPreview.addEventListener('pointerup', e => {
     const resolve = splitWaiter;
     splitWaiter = null;
     resolve(ratio);
-    splitProgressEl.textContent = t('orig.progress', { n: Math.min(3, Number((splitProgressEl.textContent.match(/(\d+)\/3/) || [0,1])[1]) + 1) });
     swipeInstruction.textContent = t('orig.splitDone');
   } else if (!busy) {
     gestureRatios = [ratio];
@@ -537,10 +539,37 @@ stalkPreview.addEventListener('pointercancel', () => {
 tapZone.addEventListener('pointerdown', e => mixEntropy(e.timeStamp, e.clientX, e.clientY));
 tapZone.addEventListener('pointermove', e => mixEntropy(e.timeStamp, e.clientX, e.clientY));
 tapZone.addEventListener('click', e => e.preventDefault());
+// 키보드: ←/→ 로 가르는 위치를 옮기고, Enter/Space 로 확정한다(가르기를 기다리는 중에도 같다).
+// 화살표를 쓰지 않고 바로 Enter/Space 를 누르면 무작위로 가른다(가운데가 '선택'처럼 보이지 않게 함).
+const KB_STEP = 0.02;
+function kbMove(dir) {
+  const cur = kbRatio !== null ? kbRatio : (parseFloat(stalkSplitMarker.style.left) || 50) / 100;
+  kbRatio = Math.min(0.96, Math.max(0.04, cur + dir * KB_STEP));
+  updateSplitPreview(0, kbRatio);
+}
 tapZone.addEventListener('keydown', e => {
-  if ((e.key === 'Enter' || e.key === ' ') && !busy && lines.length < 6) {
+  if (lines.length >= 6) return;
+  const arrow = e.key === 'ArrowLeft' ? -1 : e.key === 'ArrowRight' ? 1 : 0;
+  if (arrow && (splitWaiter || !busy)) {
     e.preventDefault();
-    gestureRatios = null;
+    kbMove(arrow);
+    return;
+  }
+  if (e.key !== 'Enter' && e.key !== ' ') return;
+  if (splitWaiter) {
+    e.preventDefault();
+    const resolve = splitWaiter;
+    splitWaiter = null;
+    const ratio = kbRatio !== null ? kbRatio : randomUnit();
+    kbRatio = null;
+    mixEntropy(e.timeStamp);
+    resolve(ratio);
+    swipeInstruction.textContent = t('orig.splitDone');
+  } else if (!busy) {
+    e.preventDefault();
+    gestureRatios = kbRatio !== null ? [kbRatio] : null;   // 화살표로 정했다면 첫 변부터 그 위치로 가르고 이후는 직접 가른다
+    pendingSplitRatios = [];
+    kbRatio = null;
     tap();
   }
 });

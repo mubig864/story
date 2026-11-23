@@ -29,7 +29,15 @@
   });
 
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' }).catch(error => {
+    navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' }).then(reg => {
+      // 오래 켜 둔 앱(PWA)도 다시 화면으로 돌아올 때 새 버전을 확인한다(최대 1시간에 한 번).
+      let last = Date.now();
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState !== 'visible' || Date.now() - last < 3600000) return;
+        last = Date.now();
+        reg.update().catch(() => {});
+      });
+    }).catch(error => {
       console.warn('서비스 워커 등록 실패:', error);
     });
   });

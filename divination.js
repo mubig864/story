@@ -32,8 +32,8 @@
                   변하지 않는 효를 맞바꾼 조합]이라 『朱子語類』의 "後十卦是變盡了，又反來" 설명과도 맞습니다.)
      · 변효 4개 → 지괘에서 변하지 않은 두 효의 효사 참고, 아래쪽 효사가 중심.
      · 변효 5개 → 지괘에서 변하지 않은 한 효의 효사가 중심.
-     · 변효 6개 → 지괘의 괘사가 중심. 단, 본괘가 건위천이면 용구(用九), 곤위지면 용육(用六)을 적용
-                 (원문 "乾坤占二用"). 이때 지괘 괘사는 참고로만 곁들임.
+     · 변효 6개 → 지괘의 괘사만 읽음(원문 "餘卦占之卦彖辭"). 단, 본괘가 건위천이면 용구(用九), 곤위지면 용육(用六)을 적용
+                 (원문 "乾坤占二用"). 이때에만 지괘 괘사를 참고로 곁들임.
    한계: 이는 주희 계열의 한 가지 전통입니다. 『춘추좌전』식 점례나 경방(京房)·소옹(邵雍) 계열, 현대 실전가마다 읽는 법이
    조금씩 다르므로, 앱은 규칙과 근거를 화면에 밝혀 두고 결과를 "참고 자료"로만 제시합니다.
 */
@@ -92,6 +92,18 @@
     };
   }
 
+  /** 효 값(6~9 ×6)만으로 적용 규칙 id 를 돌려준다(데이터 불필요). interpret() 의 ruleId 와 같다. */
+  function ruleFor(values) {
+    const h = computeHexagram(values), n = h.changing.length;
+    if (n === 0) return 'none';
+    if (n === 1) return 'one';
+    if (n === 2) return 'two';
+    if (n === 3) return threeChangeGroup(h.changing) === 'front' ? 'three-front' : 'three-back';
+    if (n === 4) return 'four';
+    if (n === 5) return 'five';
+    return h.binary === '111111' ? 'six-qian' : h.binary === '000000' ? 'six-kun' : 'six';
+  }
+
   /** 삼효변(변효 3개) 구분: 초효 포함 → 'front'(前十卦, 貞·본괘 중심), 아니면 'back'(後十卦, 悔·지괘 중심) */
   function threeChangeGroup(changing) {
     return changing.indexOf(1) !== -1 ? 'front' : 'back';
@@ -147,7 +159,7 @@
           passages = [yongPassage('primary', ben), guaPassage('reference', 'zhi', zhi)];
         } else {
           ruleId = 'six';
-          passages = [guaPassage('primary', 'zhi', zhi), guaPassage('reference', 'ben', ben)];
+          passages = [guaPassage('primary', 'zhi', zhi)];   // 원문 "餘卦占之卦彖辭": 지괘 괘사만 (본괘 참고 대목은 붙이지 않음)
         }
       }
       return {
@@ -159,7 +171,7 @@
     return { interpret, byBinary };
   }
 
-  const api = { computeHexagram, threeChangeGroup, analyzeLine, createInterpreter, LINE_BY_VALUE };
+  const api = { computeHexagram, threeChangeGroup, ruleFor, analyzeLine, createInterpreter, LINE_BY_VALUE };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.YijingDivination = api;
 })(typeof window !== 'undefined' ? window : globalThis);
