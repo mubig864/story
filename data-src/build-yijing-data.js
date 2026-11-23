@@ -59,3 +59,18 @@ const metaOut = '/* 자동 생성 파일 — 직접 수정하지 마세요. data
   'const HEX_META_BY_BITS = {}; HEX_META.forEach(m => { HEX_META_BY_BITS[m.bits] = m; });\n';
 fs.writeFileSync(path.join(dir, '..', 'hexmeta.js'), metaOut);
 console.log('hexmeta.js 생성: 괘', meta.length);
+
+// ── 서비스워커의 STATIC_VERSION 갱신: yijing-data.js 와 아이콘의 내용 해시.
+//    해설·아이콘이 그대로면 값이 같아 사용자의 캐시를 다시 받지 않고, 바뀌면 새로 받는다. (sw.js 의 STATIC 목록과 같아야 함)
+{
+  const crypto = require('crypto');
+  const root = path.join(dir, '..');
+  const h = crypto.createHash('sha1');
+  ['yijing-data.js', '512.png', 'apple-touch-icon.png', 'maskable-512.png'].forEach(f => h.update(fs.readFileSync(path.join(root, f))));
+  const ver = h.digest('hex').slice(0, 10);
+  const swPath = path.join(root, 'sw.js');
+  const sw = fs.readFileSync(swPath, 'utf8');
+  const next = sw.replace(/const STATIC_VERSION = "[^"]*";/, 'const STATIC_VERSION = "' + ver + '";');
+  if (next !== sw) fs.writeFileSync(swPath, next);
+  console.log('sw.js STATIC_VERSION:', ver);
+}
