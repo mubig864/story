@@ -27,6 +27,7 @@ for (let k = 0; k < 4096; k++) {
   if (old && old.H[ben].name.split(' (')[0] !== r.ben.name) bad('본괘 이름 불일치 ' + ben);
   if (old && old.H[zhi].name.split(' (')[0] !== r.zhi.name) bad('지괘 이름 불일치 ' + zhi);
   // 규칙별 기대값
+  if (Div.ruleFor(v) !== r.ruleId) bad('ruleFor 불일치 ' + v);
   const P = r.passages, pr = P.filter(p => p.role === 'primary');
   if (pr.length !== 1) bad('primary 1개 아님 ' + v);
   const n = ch.length; rules[r.ruleId] = (rules[r.ruleId] || 0) + 1;
@@ -46,7 +47,7 @@ for (let k = 0; k < 4096; k++) {
   if (n === 6) {
     if (r.ben.n === 1 && !(p0.type === 'yong' && p0.label === '用九')) bad('용구');
     else if (r.ben.n === 2 && !(p0.type === 'yong' && p0.label === '用六')) bad('용육');
-    else if (r.ben.n > 2 && !(p0.type === 'gua' && p0.side === 'zhi')) bad('6개 일반');
+    else if (r.ben.n > 2 && !(p0.type === 'gua' && p0.side === 'zhi' && P.length === 1)) bad('6개 일반(지괘 괘사만)');
   }
   // 모든 passage 데이터가 실제로 채워져 있는가, 효 음양이 해당 괘의 구성과 일치하는가
   P.forEach(p => {
