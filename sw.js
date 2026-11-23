@@ -1,5 +1,5 @@
 // 배포 시 CACHE_VERSION만 올리면 이전 캐시가 자동 정리됩니다.
-const CACHE_VERSION = "20261117-3";
+const CACHE_VERSION = "20261123-2";
 const CACHE_NAME = "juyeok-pwa-" + CACHE_VERSION;
 const OFFLINE_URL = "./index.html";
 const NETWORK_TIMEOUT_MS = 5000;   // 느린 망에서는 이 시간이 지나면 캐시본을 먼저 보여 준다

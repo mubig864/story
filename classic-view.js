@@ -5,7 +5,7 @@
    - 로드 순서: ... core.js → divination.js → classic-view.js → (페이지별 js)
    - core.js 의 setResultCardText() 끝에서 renderClassicBlock(info) 를 호출합니다. */
 
-const YIJING_DATA_SRC = 'yijing-data.js?v=20261112';
+const YIJING_DATA_SRC = 'yijing-data.js?v=20261123';
 let yjInterpreter = null, yjLoading = null, yjFailed = false, yjLastInfo = null;
 
 function loadYijingData() {
